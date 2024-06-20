@@ -28,10 +28,9 @@ cdk init app --language=typescript
 ### DynamoDB Table with AWS CDK
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e4f87815-a110-40ad-bedd-b482c909c418">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/56b715da-c292-4b5f-a226-a3735d0554f2">
 </p>
 
 1. Within the `dir` structure
-
 
 2. 
