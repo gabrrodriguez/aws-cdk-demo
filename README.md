@@ -8,11 +8,11 @@
 
 -------
 
-# Procedure
+## Procedure
 
-## Init Project & Determine Repo Strucute
+### Init Project & Determine Repo Strucute
 
-1. 1. Open a terminal session and iniate a project
+1. Open a terminal session and iniate a project
 ```s 
 cdk init app --language=typescript
 ```
@@ -21,7 +21,9 @@ The result of this will be a project directory structure that we will continue t
 
 2. We will be utilizing a `monorepo` structure, but you could decide to use a `multi-repo` structure.
 
-## Product Microservice
+------
+
+### Product Microservice
 
 ### DynamoDB Table with AWS CDK
 
@@ -30,10 +32,6 @@ The result of this will be a project directory structure that we will continue t
 </p>
 
 1. Within the `dir` structure
-```s 
-cdk init app --language=typescript
-```
-
 
 
 2. 
