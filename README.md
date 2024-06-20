@@ -12,14 +12,14 @@
 
 ### Init Project & Determine Repo Strucute
 
-1. Open a terminal session and iniate a project
+- [ ] Open a terminal session and iniate a project
 ```s 
 cdk init app --language=typescript
 ```
 
-The result of this will be a project directory structure that we will continue to add to.
+> The result of this will be a project directory structure that we will continue to add to.
 
-2. We will be utilizing a `monorepo` structure, but you could decide to use a `multi-repo` structure.
+- [ ] We will be utilizing a `monorepo` structure, but you could decide to use a `multi-repo` structure.
 
 ------
 
