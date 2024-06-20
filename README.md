@@ -1,14 +1,39 @@
-# Welcome to your CDK TypeScript project
+# AWS Microservice Demo
 
-This is a blank project for CDK development with TypeScript.
+## Architecture
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/fa8cd646-a241-4201-92a5-9f0261dd8d7c">
+</p>
 
-## Useful commands
+-------
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+# Procedure
+
+## Init Project & Determine Repo Strucute
+
+1. 1. Open a terminal session and iniate a project
+```s 
+cdk init app --language=typescript
+```
+
+The result of this will be a project directory structure that we will continue to add to.
+
+2. We will be utilizing a `monorepo` structure, but you could decide to use a `multi-repo` structure.
+
+## Product Microservice
+
+### DynamoDB Table with AWS CDK
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e4f87815-a110-40ad-bedd-b482c909c418">
+</p>
+
+1. Within the `dir` structure
+```s 
+cdk init app --language=typescript
+```
+
+
+
+2. 
