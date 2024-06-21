@@ -60,6 +60,8 @@ export class AwsMicroservicesStack extends cdk.Stack {
 
 > REFERENCE: _https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html_
 
+> REFERENCE: _https://github.com/aws/aws-cdk/tree/main/packages/aws-cdk-lib_
+
 2. 
 
 
