@@ -1,7 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
+import { PrimaryKey } from 'aws-cdk-lib/aws-appsync';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Rule } from 'aws-cdk-lib/aws-events';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { join } from 'path';
+
 
 export class AwsMicroservicesStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -16,5 +21,25 @@ export class AwsMicroservicesStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, 
       billingMode: BillingMode.PAY_PER_REQUEST
     });
+
+    const nodeJSFunctionProps: NodejsFunctionProps = {
+      bundling: {
+        externalModules: [
+          'aws-sdk'
+        ]
+      },
+      environment: {
+        PRIMARY_KEY: 'id',
+        DYNAMODB_TABLE_NAME: productTable.tableName
+      },
+      runtime: Runtime.NODEJS_16_X
+    }
+
+    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+      entry: join(__dirname, `/../src/product/index.js`),
+      ...nodeJSFunctionProps,
+    })
+    
+    productTable.grantReadWriteData(productFunction)
   }
 }
