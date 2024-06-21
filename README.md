@@ -99,7 +99,7 @@ In this documenation you'll see a more specific implemenation of lambda. Using t
 
 Replace the prior lambda code block with this code: 
 
-```s
+```js
     const nodeJSFunctionProps: NodejsFunctionProps = {
       bundling: {
         externalModules: [
