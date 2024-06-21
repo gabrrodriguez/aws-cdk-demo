@@ -6,18 +6,26 @@
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/fa8cd646-a241-4201-92a5-9f0261dd8d7c">
 </p>
 
+This is the architecture we will develop within this demo. This will be completed in a step by step format. 
+
 -------
 
 ## Procedure
 
-### Init Project & Determine Repo Strucute
+### Init Project
 
-- [ ] Open a terminal session and iniate a project
+- [ ] Open a terminal session and `init` a project
 ```s 
 cdk init app --language=typescript
 ```
 
 > The result of this will be a project directory structure that we will continue to add to.
+
+Ulitmately our project structure will consist of the following `root` level folders. There will be sub-folders and files, but the `dir-architecture` that we are implementing effectivley follows this construct.
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/d1879b6e-8f73-4c9c-8774-38a2be2ce44e">
+</p>
 
 - [ ] We will be utilizing a `monorepo` structure, but you could decide to use a `multi-repo` structure.
 
