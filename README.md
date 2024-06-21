@@ -138,6 +138,27 @@ import { Construct } from 'constructs';
 import { join } from 'path';
 ```
 
+3. We will need to now depart from our _infrastructure_ provisioning process, and now think about our services. To do this we need to recall that our Service logic will reside in a folder called `src` which we don't currently have, so let's create it. 
+
+3a. Within the `dir` structure create a dir called `src` at the same level as `bin` and `lib`. 
+
+3b. This `src` folder will contain our microservice code, which we will have for `product`, `basket`, & `order`. Create these 3 sub-folders under `src`.
+
+3c. Within the `src/product` folder create a file called `index.js`. Input the following code. You can see that the code only prints to the console, which is fine for now, we are just trying to ensure it is working. We will implement `product` specific logic later. 
+
+```js
+exports.handler = async function(event) {
+    console.log("request", JSON.stringify(event, undefined, 2));
+    return {
+        statusCode: 200,
+        headers: { "Content-Type": "text/plain" },
+        body: `Hello from Product Microservice! You have hit the ${event.path}\n`
+    }
+}
+```
+
+4. After we create our API Gateway, we will be able to send traffic to our lambda we just created, and test to see that it is working. 
+
 -------
 
 ### 3. API Gateway
@@ -145,4 +166,8 @@ import { join } from 'path';
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5577016b-5372-406c-b0b5-3b7d93c002c5">
 </p>
+
+1. 
+
+
 
