@@ -36,7 +36,7 @@ Ulitmately our project structure will consist of the following `root` level fold
 ### 1. DynamoDB Table
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/56b715da-c292-4b5f-a226-a3735d0554f2">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4171845b-fab8-4301-8f37-1eec3627b3b2">
 </p>
 
 1. Within the `dir` structure, nav to the `/lib/aws-microservices-stacks.ts` file and input the following code which will provision the `product` table in DDB.
@@ -75,7 +75,7 @@ export class AwsMicroservicesStack extends cdk.Stack {
 ### 2. Lambda 
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4677e5b0-43a1-4f48-8dcc-c63400a7c1bc">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e1183b82-d51d-4ade-8c23-5e9790067186">
 </p>
 
 1. Within the `dir` structure, nav to the `/lib/aws-microservices-stacks.ts` file and input the following code after the `productTable` code block: 
