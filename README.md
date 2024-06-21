@@ -314,4 +314,21 @@ Which will return the logic provided in the Lambda Function:
 </p>
 
 #### Congrats it works! 
+
 -------
+
+### 6. Test Using Postman
+
+1. `Postman` is a tool that will help us test endpoints without a full deployment of our application. if you do not have Postman, you can download from [here](https://www.postman.com/downloads/)
+
+2. Once you have `Postman`, you can set up env variables, and endpoints to Test our application. Create the following endpoints on `Postman` via a `Collection`. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/89f7f199-5e82-49a4-a6b5-74e5608c89f8">
+</p>
+
+Create an `Environment` to contain environment variables as well. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/bc043932-47d2-4f8a-a34b-68b8e3de486f">
+</p>
