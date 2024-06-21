@@ -41,25 +41,25 @@ Ulitmately our project structure will consist of the following `root` level fold
 
 1. Within the `dir` structure, nav to the `/lib/aws-microservices-stacks.ts` file and input the following code which will provision the `product` table in DDB.
 ```js
-import * as cdk from 'aws-cdk-lib';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
-import { Construct } from 'constructs';
+    const nodeJsFunctionProps: NodejsFunctionProps = {
+      bundling: {
+        externalModules: [
+          'aws-sdk'
+        ]
+      },
+      environment: {
+        PRIMARY_KEY: 'id',
+        DYNAMODB_TABLE_NAME: productTable.tableName
+      },
+      runtime: Runtime.NODEJS_16_X
+    }
 
-export class AwsMicroservicesStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
-
-    const productTable = new Table(this, 'product', {
-      partitionKey: { 
-        name: 'id', 
-        type: AttributeType.STRING
-      }, 
-      tableName: 'product',
-      removalPolicy: cdk.RemovalPolicy.DESTROY, 
-      billingMode: BillingMode.PAY_PER_REQUEST
-    });
-  }
-}
+    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+      entry: join(__dirname, `/../src/product/index.js`),
+      ...nodeJsFunctionProps,
+    })
+    
+    productTable.grantReadWriteData(productFunction)
 ```
 
 > REFERENCE: _https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dynamodb-readme.html_
@@ -167,7 +167,63 @@ exports.handler = async function(event) {
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5577016b-5372-406c-b0b5-3b7d93c002c5">
 </p>
 
-1. 
+1. Go to the AWS CDK and utilize the reference documentation for `api-gateway`. In the implementation you can see that there are several `api-gateway` nodes within the documentation. The difference correlates with the API Gateway options. (e.g. HTTPs, REST, Sockets, etc.)
 
+2. Nav back to the `lib/aws-microservices-stack.ts` file. Let's begin by putting in some psuedo-code on the APIs that we will need create for the `product` service. 
 
+```js
+    // Product microservices api gateway
+    // root name = product
+
+    // GET /product
+    // POST /product
+
+    // Single product with id parameter
+    // GET /product/{id}
+    // PUT /product/{id}
+    // DELETE /product/{id}
+```
+
+3. Now lets create the API Gateway resource for our `product` service that aligns to our psuedo-code. Input the following code.
+
+```js
+    // Product microservices api gateway
+    const apigw = new LambdaRestApi(this, 'productApi', {
+      restApiName: 'ProductSerivce',
+      handler: productFunction,
+      proxy: false
+    });
+
+    // root name = product
+    const product = apigw.root.addResource('product')
+
+    // GET /product
+    product.addMethod('GET')
+
+    // POST /product
+    product.addMethod('POST')
+
+    // Single product with id parameter
+    const singleProduct = product.addResource('{id}')
+
+    // GET /product/{id}
+    singleProduct.addMethod('GET')
+
+    // PUT /product/{id}
+    singleProduct.addMethod('PUT')
+
+    // DELETE /product/{id}
+    singleProduct.addMethod('DELETE')
+```
+
+4. Ensure that the import statements are also aligned, to include `LambdaRestApi`. 
+```js
+import * as cdk from 'aws-cdk-lib';
+import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Construct } from 'constructs';
+import { join } from 'path';
+```
 
