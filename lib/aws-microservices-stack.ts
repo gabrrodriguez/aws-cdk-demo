@@ -1,7 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { PrimaryKey } from 'aws-cdk-lib/aws-appsync';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { Rule } from 'aws-cdk-lib/aws-events';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
@@ -22,7 +20,7 @@ export class AwsMicroservicesStack extends cdk.Stack {
       billingMode: BillingMode.PAY_PER_REQUEST
     });
 
-    const nodeJSFunctionProps: NodejsFunctionProps = {
+    const nodeJsFunctionProps: NodejsFunctionProps = {
       bundling: {
         externalModules: [
           'aws-sdk'
@@ -37,7 +35,7 @@ export class AwsMicroservicesStack extends cdk.Stack {
 
     const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
       entry: join(__dirname, `/../src/product/index.js`),
-      ...nodeJSFunctionProps,
+      ...nodeJsFunctionProps,
     })
     
     productTable.grantReadWriteData(productFunction)

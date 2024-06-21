@@ -100,7 +100,7 @@ In this documenation you'll see a more specific implemenation of lambda. Using t
 Replace the prior lambda code block with this code: 
 
 ```js
-    const nodeJSFunctionProps: NodejsFunctionProps = {
+    const nodeJsFunctionProps: NodejsFunctionProps = {
       bundling: {
         externalModules: [
           'aws-sdk'
@@ -115,11 +115,8 @@ Replace the prior lambda code block with this code:
 
     const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
       entry: join(__dirname, `/../src/product/index.js`),
-      ...nodeJSFunctionProps,
+      ...nodeJsFunctionProps,
     })
-    
-    productTable.grantReadWriteData(productFunction)
-  }
 ```
 
 Ensure the following imports are in place: 
