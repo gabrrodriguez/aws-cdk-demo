@@ -244,12 +244,14 @@ When we run this command an additional folder will be added to our directory str
 3. If you successfully executed this command, you should see in your console the a Docker image build sequence followed by JSON output which represent the CF manifests in your `cdk.out` folder. If you see this output and no errors, the `cdk synth` command was successfully executed. 
 
 4. Another step to take will be to run the `cdk diff` command. What this command does is compare your latest changes to files in your directory structure to the `cdk.out` manifest files. This will identify differences in your latest development to what is about to be created in CF. Since this is the first time running this command, the `diff` will be everything you created at this point. Your subsequent `diff` attempts will id incremental deltas. Run the following command :
-```js
+
+```s
 cdk diff
 ```
 
 5. Now you are ready to deploy. To do this, run the following command. Because we implemented our code with new Permission sets you will be prompted (y/n) as an incremental step. When prompted enter `y`.
-```js
+
+```s
 cdk deploy
 
 // prompt
