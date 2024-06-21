@@ -25,7 +25,7 @@ cdk init app --language=typescript
 
 ### Product Microservice
 
-### DynamoDB Table
+### 1. DynamoDB Table
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/56b715da-c292-4b5f-a226-a3735d0554f2">
@@ -64,7 +64,7 @@ export class AwsMicroservicesStack extends cdk.Stack {
 
 -------
 
-### Lambda 
+### 2. Lambda 
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4677e5b0-43a1-4f48-8dcc-c63400a7c1bc">
@@ -131,3 +131,10 @@ import { join } from 'path';
 ```
 
 -------
+
+### 3. API Gateway
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5577016b-5372-406c-b0b5-3b7d93c002c5">
+</p>
+
