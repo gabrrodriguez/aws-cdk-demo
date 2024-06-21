@@ -227,3 +227,88 @@ import { Construct } from 'constructs';
 import { join } from 'path';
 ```
 
+------
+
+### 4. Try it out
+
+1. The AWS Lambda by design runs as a containerized implementation, and to run the `cdk synth` command, the container image will be pulled to your local device. To ensure that you don't receive any errors during this process ensure that you have Docker Daemon running. If you do not have Docker, you can download it [here](https://www.docker.com/products/docker-desktop/)
+
+2. Now that the components of the `product` microservice are drafted, and Docker Daemon is running, we need to see if the AWS CDK code works. To do this we will run an initial test with the CDK tool. Run the following command: 
+
+```s
+cdk synth
+```
+
+When we run this command an additional folder will be added to our directory structure called `cdk.out`. The files within this dir will be the CloudFormation manifests that will be run by AWS in the Cloud Formation Service when we deploy our code using AWS CDK. 
+
+3. If you successfully executed this command, you should see in your console the a Docker image build sequence followed by JSON output which represent the CF manifests in your `cdk.out` folder. If you see this output and no errors, the `cdk synth` command was successfully executed. 
+
+4. Another step to take will be to run the `cdk diff` command. What this command does is compare your latest changes to files in your directory structure to the `cdk.out` manifest files. This will identify differences in your latest development to what is about to be created in CF. Since this is the first time running this command, the `diff` will be everything you created at this point. Your subsequent `diff` attempts will id incremental deltas. Run the following command :
+```js
+cdk diff
+```
+
+5. Now you are ready to deploy. To do this, run the following command. Because we implemented our code with new Permission sets you will be prompted (y/n) as an incremental step. When prompted enter `y`.
+```js
+cdk deploy
+
+// prompt
+y
+```
+
+-------
+
+### 5. Verify On AWS 
+
+1. The AWS CDK template per our instructions above should have used the AWS CDK to communicate with AWS Cloudformation to create 
+- [ ] An AWS Cloudformation Stack
+- [ ] An AWS API Gateway with a series of endpoints
+- [ ] An AWS Lambda Function 
+- [ ] An AWS DynamoDB Table
+
+Let's go validate that all these items were created: 
+
+2. Validate the AWS Cloudformation Stack
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e867e524-a3bc-4f8b-978b-21cd9aa30e80">
+</p>
+
+3. Validate the AWS API Gateway
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/77670ebc-1b78-4478-84cd-89f49b0548d1">
+</p>
+
+4. Validate the AWS Lambda Function 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e9943b30-cb83-49d1-adf0-e429fa5107d6">
+</p>
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/910f7090-899b-48a5-bdd2-891024604974">
+</p>
+
+5. Validate the AWS DynamoDB Table
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/d3d62e15-3847-417c-97bc-89c1e57310ea">
+</p>
+
+6. You can also test the AWS Gateway endpoint by using the endpoint provided in the console. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/ebda6307-44aa-4c6f-b0e8-7900f03038a1">
+</p>
+
+https://31fd7z6bua.execute-api.us-east-1.amazonaws.com/prod/
+
+Which will return the logic provided in the Lambda Function: 
+
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5a4192a0-2202-48dc-82e4-08e94d59ab6d">
+</p>
+
+-------

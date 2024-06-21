@@ -6,7 +6,6 @@ import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-node
 import { Construct } from 'constructs';
 import { join } from 'path';
 
-
 export class AwsMicroservicesStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -68,10 +67,5 @@ export class AwsMicroservicesStack extends cdk.Stack {
 
     // DELETE /product/{id}
     singleProduct.addMethod('DELETE')
-
-
-
-
-
   }
 }
