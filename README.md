@@ -55,6 +55,7 @@ export class AwsMicroservicesStack extends cdk.Stack {
 ```
 
 > REF: [AWS CDK 2.*](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dynamodb-readme.html)
+
 > REF: [github/aws-cdk-ddb](https://github.com/gabrrodriguez/aws-cdk-dynamodb-table/tree/cdk-v2)
 
 2. 
