@@ -31,6 +31,32 @@ cdk init app --language=typescript
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/56b715da-c292-4b5f-a226-a3735d0554f2">
 </p>
 
-1. Within the `dir` structure
+1. Within the `dir` structure, nav to the `/lib/aws-microservices-stacks.ts` file and input the following code which will provision the `product` table in DDB.
+```js
+import * as cdk from 'aws-cdk-lib';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
+import { Construct } from 'constructs';
+
+export class AwsMicroservicesStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const productTable = new Table(this, 'product', {
+      partitionKey: { 
+        name: 'id', 
+        type: AttributeType.STRING
+      }, 
+      tableName: 'product',
+      removalPolicy: cdk.RemovalPolicy.DESTROY, 
+      billingMode: BillingMode.PAY_PER_REQUEST
+    });
+  }
+}
+```
+
+> REF: [AWS CDK 2.*](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dynamodb-readme.html)
+> REF: [github/aws-cdk-ddb](https://github.com/gabrrodriguez/aws-cdk-dynamodb-table/tree/cdk-v2)
 
 2. 
+
+
