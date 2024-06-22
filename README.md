@@ -386,6 +386,7 @@ Then you will need to create a role with Delete permissions or reference an role
 aws cloudformation delete-stack --role-arn arn:aws:iam::551061066810:role/DeleteCloudFormationStack --stack-name AwsMicroservicesStack
 ```
 
-> REFERENCE: This command worked see [StackOverflow](https://stackoverflow.com/questions/48709423/unable-to-delete-cfn-stack-role-is-invalid-or-cannot-be-assumed)
+> REFERENCE: [StackOverflow](https://stackoverflow.com/questions/48709423/unable-to-delete-cfn-stack-role-is-invalid-or-cannot-be-assumed)
 
-3. 
+3. Validate that this works on CloudFormation, API Gateway, Lambda, & DynamoDB. 
+
