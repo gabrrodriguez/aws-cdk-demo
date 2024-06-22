@@ -317,7 +317,7 @@ Which will return the logic provided in the Lambda Function:
 
 -------
 
-### 6. Test Using Postman
+### 6. Verify using Postman
 
 1. `Postman` is a tool that will help us test endpoints without a full deployment of our application. if you do not have Postman, you can download from [here](https://www.postman.com/downloads/)
 
@@ -344,3 +344,48 @@ If you view the Log Streams, and the Log Events you can see that our API calls t
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/9141d076-14f7-4e31-b891-ff94f66f8693">
 </p>
+
+--------
+
+### 7. Turn the lights off
+
+1. `Turn the lights` is a concept encouraged by Amazon CTO Werner Vogels. It refers to the strategy to eliminate resources that are not needed. 
+
+In our case there are 2 reasons to always `turn the lights off`. 
+- [ ] AWS CDK implements our design in code, we can recreate anytime we want
+- [ ] AWS is a consumption model, if we have resources on AWS we have a potential they are incurring charges
+
+Therefore, we will use AWS CDK to `turn the lights off` with the `destroy` command. Run the following code: 
+
+```s
+cdk destroy
+
+// prompt 
+y
+```
+
+2. Verify in AWS Cloudformation that the AWS CF stack is being destroyed. There were several issues I ran into while trying to delete the stack with AWS CDK. The research suggests that there is a potential that AWS Cloudformation will "forget" the assocaiated roles while attempting to delete a CF stack. If this happens you may see an error similar to the one below. 
+
+
+ ```js
+ // Error
+ ❌  AwsMicroservicesStack: destroy failed Error: Role arn:aws:iam::551061066810:role/cdk-hnb659fds-cfn-exec-role-551061066810-us-east-1 is invalid or cannot be assumed
+    at destroyStack (/opt/homebrew/lib/node_modules/aws-cdk/lib/index.js:451:2157)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async CdkToolkit.destroy (/opt/homebrew/lib/node_modules/aws-cdk/lib/index.js:454:207603)
+    at async exec4 (/opt/homebrew/lib/node_modules/aws-cdk/lib/index.js:509:54331)
+```
+
+To fix the issue first understand what is going on here. 
+
+> REFERENCE: [Medium](https://thewerner.medium.com/aws-cloud-formation-role-arn-aws-iam-xxx-is-invalid-or-cannot-be-assumed-14c17e1098e2)
+
+Then you will need to create a role with Delete permissions or reference an role that has these permissions and run the following command: 
+
+```s
+aws cloudformation delete-stack --role-arn arn:aws:iam::551061066810:role/DeleteCloudFormationStack --stack-name AwsMicroservicesStack
+```
+
+> REFERENCE: This command worked see [StackOverflow](https://stackoverflow.com/questions/48709423/unable-to-delete-cfn-stack-role-is-invalid-or-cannot-be-assumed)
+
+3. 
