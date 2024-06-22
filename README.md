@@ -364,8 +364,19 @@ cdk destroy
 y
 ```
 
-2. Verify in AWS Cloudformation that the AWS CF stack is being destroyed. There were several issues I ran into while trying to delete the stack with AWS CDK. The research suggests that there is a potential that AWS Cloudformation will "forget" the assocaiated roles while attempting to delete a CF stack. If this happens you may see an error similar to the one below. 
+2. Verify in AWS Cloudformation that the AWS CF stack is being destroyed. 
 
+It is not uncommon with CloudFormation to be able to successfully create something, but not have rights to destroy something. It could be because of something that wasn't configured correctly or it could be CloudFormation is in midst of a change from last time you used it till now. 
+
+If you are receiving an error when attempting to destroy first attempt to view the logs and see where the error is occuring. You can do this with the following command: 
+
+```s
+cdk destory --verbose
+``` 
+
+The output of his command will be the execution logs, but also the error logs so you can see what is happening creating an error. 
+
+In my case I received an error below: 
 
  ```js
  // Error
@@ -376,11 +387,13 @@ y
     at async exec4 (/opt/homebrew/lib/node_modules/aws-cdk/lib/index.js:509:54331)
 ```
 
-To fix the issue first understand what is going on here. 
+The research suggests that there is a potential that AWS Cloudformation will "forget" the assocaiated roles while attempting to delete a CF stack. This is a known issue referred to as "Zombie_Roles".
+
+To fix the issue first understand what is going: 
 
 > REFERENCE: [Medium](https://thewerner.medium.com/aws-cloud-formation-role-arn-aws-iam-xxx-is-invalid-or-cannot-be-assumed-14c17e1098e2)
 
-Then you will need to create a role with Delete permissions or reference an role that has these permissions and run the following command: 
+Then fix the issue by creating or referencing a role with Delete permissions for AWS Cloudformation. Insert the ARN reference and the Stack name you are trying to delete into the AWS CLI command below:  
 
 ```s
 aws cloudformation delete-stack --role-arn arn:aws:iam::551061066810:role/DeleteCloudFormationStack --stack-name AwsMicroservicesStack
@@ -388,5 +401,5 @@ aws cloudformation delete-stack --role-arn arn:aws:iam::551061066810:role/Delete
 
 > REFERENCE: [StackOverflow](https://stackoverflow.com/questions/48709423/unable-to-delete-cfn-stack-role-is-invalid-or-cannot-be-assumed)
 
-3. Validate that this works on CloudFormation, API Gateway, Lambda, & DynamoDB. 
+3. Validate that this works on CloudFormation, API Gateway, Lambda, & DynamoDB. If you check quick enough you will see CloudFormation `Delete In Progress` status, otherwise you can verify by the fact that your Stack, API gateway & endpoints, Lambda function, and DDB table are all now gone from the console. 
 
