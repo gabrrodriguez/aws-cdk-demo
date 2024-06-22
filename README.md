@@ -332,3 +332,15 @@ Create an `Environment` to contain environment variables as well.
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/bc043932-47d2-4f8a-a34b-68b8e3de486f">
 </p>
+
+3. You can see the results of API requests in Postman, but you can also view using `Cloudwatch` logs from your AWS Lambda screen. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/54cecf9d-7852-48c3-9988-efbe352b432d">
+</p>
+
+If you view the Log Streams, and the Log Events you can see that our API calls that managed by API Gateway, and invoking our Lambda function are also logged: 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/9141d076-14f7-4e31-b891-ff94f66f8693">
+</p>
