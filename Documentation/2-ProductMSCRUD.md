@@ -16,6 +16,10 @@ This is the architecture we will develop within this demo. This will be complete
 
 Get familiar with the AWS SDK.
 
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/12bd7cc2-c947-41dd-9d2c-07d78799a439">
+</p>
+
 A few reasons to point out as to why we will use AWS SDK
 - [ ] `Product` Lambda microservice function runtime is NodeJS and there is native support within the AWS SDK
 - [ ] AWS SDK also has support for JavaScript version 3
