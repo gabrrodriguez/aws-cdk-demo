@@ -239,6 +239,10 @@ import { join } from 'path';
 cdk synth
 ```
 
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/51ff6094-fe29-4edc-84c1-2077e3310c8c">
+</p>
+
 When we run this command an additional folder will be added to our directory structure called `cdk.out`. The files within this dir will be the CloudFormation manifests that will be run by AWS in the Cloud Formation Service when we deploy our code using AWS CDK. 
 
 3. If you successfully executed this command, you should see in your console the a Docker image build sequence followed by JSON output which represent the CF manifests in your `cdk.out` folder. If you see this output and no errors, the `cdk synth` command was successfully executed. 
@@ -248,6 +252,10 @@ When we run this command an additional folder will be added to our directory str
 ```s
 cdk diff
 ```
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/e1f2cdf8-640a-4f81-9e5f-ecb31597e656">
+</p>
 
 5. Now you are ready to deploy. To do this, run the following command. Because we implemented our code with new Permission sets you will be prompted (y/n) as an incremental step. When prompted enter `y`.
 
