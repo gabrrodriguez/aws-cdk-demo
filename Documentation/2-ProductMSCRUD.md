@@ -31,7 +31,7 @@ A few reasons to point out as to why we will use AWS SDK
 
 > REFERENCE: [AWS SDK for Javascript version 3 API Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/)
 
-### 2. Build out the `product` lambda function 
+### 2. Add `package.json` and dependencies to your `product` service
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4e01ad22-6fa3-4452-a8de-475a9869cffa">
@@ -82,4 +82,46 @@ Your `package.json` file should now look like this:
   }
 }
 ```
+
+### 3. Examine the event that will be passed from API Gateway to Lambda
+
+1. Before we invoke a call to Lambda for our `product` service, we should look at the `event` object that will be sent from API Gateway to Lambda to understand what data will be available to us. 
+
+You can view this in the docs [here](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html). 
+
+You can see that a `synchronous` event is passed from API Gateway to Lambda and you can see the JSON key:value mappings. 
+
+2. We will use the event attributes to perform a switch operation on our `httpMethod` so we can execute our CRUD operations. A notional example can be seen in the code below. 
+
+```js
+exports.handler = async function(event) {
+    console.log("request", JSON.stringify(event, undefined, 2));
+
+    // Todo - switch case event.httpmethod to perform CRUD operations using the ddbClient object
+
+    if(event.httpmethod == "GET") {
+        doStuff()
+    }
+
+    return {
+        statusCode: 200,
+        headers: { "Content-Type": "text/plain" },
+        body: `Hello from Product Microservice! You have hit the ${event.path}\n`
+    }
+}
+```
+
+3. Instead of using an `if statement` we will swap for a `switch` statement and implement our CRUD for our various HTTP methods. We will start with our `GET` method for both `GET all Products` and `GET a Product`. We can specify the difference with an if statement evaluating whether or not the request has a `pathParameter` of `product.id`. If it does, we retrieve a single product. If it does not, then we retrieve all products. Replace the if statement code block in Step 2 with the swith statement code block below: 
+
+```js
+    switch(event.httpmethod) {
+        case "GET": 
+            if(event.pathParameters != null) {
+                body = await getProduct(event.pathParameters.id)
+            } else {
+                body = await getAllProducts()
+            }
+    }
+```
+
 
