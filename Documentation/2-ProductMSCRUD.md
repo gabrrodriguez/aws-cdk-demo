@@ -124,4 +124,115 @@ exports.handler = async function(event) {
     }
 ```
 
+-------
 
+### 4. Understand the DDB interface capability
+
+1. While we evaluate the Lambda CRUD functions, they will interface directly to the DDB table. We should examime WHAT capability does DDB SDK provide so we can determine how to interact with the Tables. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/da4c4138-92de-4137-857b-a53cc115fabe">
+</p>
+
+2. You can utilize the `Amazon DynamoDB` documentaiton for input on API operations. See documentation [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html). The 4 primary methods that we will use from this documenation and we will incorporate to the lambda functions to interface to DDB are the following: 
+- [ ] `PutItem`
+- [ ] `GetItem`
+- [ ] `UpdateItem`
+- [ ] `DeleteItem`
+
+3. Now lets implement the AWS SDK that will allow us to import DDB libraries and utilize the functionality we called out in Step 2 above. Return to our reference AWS SDK documentation to see examples. [here](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/dynamodb-example-table-read-write.html). Here we will implement a `try/catch` block, and marshall our product definition to JSON Object that will be stored in our DDB table. Enter the following code: 
+
+```js
+const getProduct = async(productId) => {
+    console.log(`getProduct API`)
+
+    try {
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            Key: marshall({ id: productId })
+        }
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+To utilize the `marshall` function, you will need to import the `marshall` function from the `@aws-sdk/util-dynamodb` library. 
+
+```s
+const { marshall } = require("@aws-sdk/util-dynamodb");
+```
+
+> REFERENCE: See definition of `marshall`
+<p align="center">
+<img width="334" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/1f23b133-125c-47c9-b7d2-8457a0e2a592">
+</p>
+
+> REFERENCE: Note the use of `environment variables`. Recall we defined these env variables in our `lib/aws-microservices-stack.ts` file when we provisioned our DDB table using AWS CDK. See graphic below. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/1a894fa5-0f55-499c-b29f-878c0e22c48f">
+</p>
+
+4. In the above step, we simply provided "what" needs to be written to the ddb table, but we didn't specify a method to do so. We need to call the `ddb client` and utilize the `send()` method with a new Item Object `GetItemCommand()` to write to the `ddb table`. To do this replace the code block in Step 3 with the following: 
+
+```js
+const getProduct = async(productId) => {
+    console.log(`getProduct API`)
+
+    try {
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            Key: marshall({ id: productId })
+        }
+
+        const { Item } = await DynamoDBClient.send(new GetItemCommand(params))
+        console.log( Item )
+        return ( Item ) ? unmarshall( Item ) : {}
+
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+Go back to your import statements and ensure that they are ES6 implementation that will utilize the `import` statement vs. the legacy method which uses `require`. This will matter when we bundle applications. 
+
+```js
+// Old - ES5
+const { DynamoDBClient, GetItemCommand } = require("@aws-sdk/client-dynamodb");
+const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
+
+// Update to - ES6
+import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+```
+
+5. Now that we created `getProduct` we also want to `getProducts`. Implement this API with the following code: 
+
+```js
+const getAllProducts = async () => {
+    console.log(`Get all Products`)
+    try {
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME
+        }
+        const { Items } = await DynamoDBClient.send(new ScanCommand(params))
+        console.log( Items )
+        return ( Items ) ? unmarshall( Item ) : {}
+    } catch (error) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+Ensure that all the required import statements are provided. 
+
+```js
+import { DynamoDBClient, GetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
+```
