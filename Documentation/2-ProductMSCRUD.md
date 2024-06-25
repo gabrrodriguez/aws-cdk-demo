@@ -34,7 +34,7 @@ A few reasons to point out as to why we will use AWS SDK
 ### 2. Add `package.json` and dependencies to your `product` service
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/cac4d0a6-79a7-4539-bf3f-ab41f6f4d7e7">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/10ffd20a-2a40-40a6-bf08-2ed505762ad0">
 </p>
 
 1. First we will be install `npm` dependencies within our `products` ms. We can manage our dependencies with a `package.json` file. Create this file within your `/src/product` dir. 
@@ -413,5 +413,41 @@ const updateProduct = async (event) => {
     }
 }
 ```
+
+13. The last endpoint that we will implement will include the ability to introduce query params within the URL. For example we can include an endpoint that executes a req/res query on an endpoint formated similar to the following: 
+
+```js
+// GET product/1234?category=Phone
+// event.queryStringParameters
+```
+
+To enable this, update our `switch` block with the following code: 
+
+```js
+    switch(event.httpmethod) {
+        case "GET": 
+            if(event.queryStringParameters != null) {
+                body = await getProductsByCategory(event)
+            }
+            else if(event.pathParameters != null) {
+                body = await getProduct(event.pathParameters.id)
+            } else {
+                body = await getAllProducts()
+            }
+        case "POST": 
+            body = await createProduct(event)
+            break
+        case "DELETE":
+            body = await deleteProduct(event.pathParameters.id)
+            break
+        case "PUT": 
+            body = await updateProduct(event.pathParameters.id)
+            break
+        default: 
+            throw new Error(`Unsupported route: ${event.httpMethod}`)
+    }
+```
+
+> NOTE: Note that in our `switch` statement, we are starting with the URL query that is literally the "longest". This is on purpose as NodeJS will attempt to match the first instance from "north" / "south" of the file, that matches the condition. Therefore the placement of URL endpoints does matter. 
 
 -------
