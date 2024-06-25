@@ -370,7 +370,7 @@ const deleteProduct = async (productId) => {
             body = await deleteProduct(event.pathParameters.id)
             break
         case "PUT": 
-            body = await updateProduct(event)
+            body = await updateProduct(event.pathParameters.id)
             break
         default: 
             throw new Error(`Unsupported route: ${event.httpMethod}`)
@@ -380,7 +380,7 @@ const deleteProduct = async (productId) => {
 12. Now lets implment the `updateProduct` implementation. Input the following code: 
 
 ```js
-const updateProduct = async (event) {
+const updateProduct = async (event) => {
     console.log(`updateProdcut function event:  ${event}`)
 
     try {

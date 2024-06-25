@@ -407,7 +407,24 @@ Then fix the issue by creating or referencing a role with Delete permissions for
 aws cloudformation delete-stack --role-arn arn:aws:iam::551061066810:role/DeleteCloudFormationStack --stack-name AwsMicroservicesStack
 ```
 
+This will delete the Cloudformation stack, but you will also need to delete 2 additional items, or the next time you run the `cdk bootstrap` command you will get an error. 
+1. Delete the S3 bucket the houses the lambda code that is zipped and uploaded on deployment. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/8ae2178e-5af3-44c4-a3bc-56cbeff23d94">
+<p>
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/07999f36-2892-40fb-9ffc-fc2c67836396">
+<p>
+
+
+2. Delete the `cdk.out` directory that is created in the `dir structure`
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/90595771-5dd0-44d5-83da-9b545056f9d7">
+</p>
+
 > REFERENCE: [StackOverflow](https://stackoverflow.com/questions/48709423/unable-to-delete-cfn-stack-role-is-invalid-or-cannot-be-assumed)
 
 3. Validate that this works on CloudFormation, API Gateway, Lambda, & DynamoDB. If you check quick enough you will see CloudFormation `Delete In Progress` status, otherwise you can verify by the fact that your Stack, API gateway & endpoints, Lambda function, and DDB table are all now gone from the console. 
-
