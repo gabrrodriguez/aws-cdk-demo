@@ -308,3 +308,110 @@ const createProduct = async (event) => {
     }
 }
 ```
+
+9. Now we can create a DELETE method. For this first update our `switch` statement with a `DELETE` case. Replace the existing `switch` block with the following code: 
+
+```js
+    switch(event.httpmethod) {
+        case "GET": 
+            if(event.pathParameters != null) {
+                body = await getProduct(event.pathParameters.id)
+            } else {
+                body = await getAllProducts()
+            }
+        case "POST": 
+            body = await createProduct(event)
+            break
+        case "DELETE":
+            body = await deleteProduct(event.pathParameters.id)
+            break
+        default: 
+            throw new Error(`Unsupported route: ${event.httpMethod}`)
+    }
+```
+
+10. Now implement the `deleteProduct()` logic. Input the following code: 
+
+```js
+const deleteProduct = async (productId) => {
+    console.log(`deleteProduct function productId: ${productId}`)
+
+    try {
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            Key: marshall({ id: productId })
+        }
+        const deleteResult = await DynamoDBClient.send(new DeleteItemCommand(params))
+        console.log(deleteResult)
+        return deleteResult
+
+
+    } catch (error) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+11. Lets input our final method for this endpoint which is the PUT method for our `product` service. To do this add an additional swtich statement. Replace the `switch` code block with the following code: 
+
+```js
+    switch(event.httpmethod) {
+        case "GET": 
+            if(event.pathParameters != null) {
+                body = await getProduct(event.pathParameters.id)
+            } else {
+                body = await getAllProducts()
+            }
+        case "POST": 
+            body = await createProduct(event)
+            break
+        case "DELETE":
+            body = await deleteProduct(event.pathParameters.id)
+            break
+        case "PUT": 
+            body = await updateProduct(event)
+            break
+        default: 
+            throw new Error(`Unsupported route: ${event.httpMethod}`)
+    }
+```
+
+12. Now lets implment the `updateProduct` implementation. Input the following code: 
+
+```js
+const updateProduct = async (event) {
+    console.log(`updateProdcut function event:  ${event}`)
+
+    try {
+        const requestBody = JSON.parse(event.body)
+        const objKeys = Object.keys(requestBody)
+
+        console.log(`updateProduct function requestBody: ${requestBody}, objKeys: ${objKeys} `)
+
+        const params = {
+            TableName: process.env.DYNAMODB_TABLE_NAME,
+            Key: marshall({ id: event.pathParameters.id }),
+            UpdateExpression: `SET ${objKeys.map((_, index) => `#key${index} = :value${index}`).join(", ")}`,
+            ExpressionAttributeNames: objKeys.reduce((acc, key, index) => ({
+                ...acc,
+                [`#key${index}`]: key,
+            }), {}),
+            ExpressionAttributeValues: marshall(objKeys.reduce((acc, key, index) => ({
+                ...acc,
+                [`:value${index}`]: requestBody[key],
+            }), {})),
+          };
+
+          const updateResult = await DynamoDBClient.send(new UpdateItemCommand(params))
+          console.log(updateResult)
+          return updateResult
+          
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+-------
