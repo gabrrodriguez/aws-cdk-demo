@@ -126,7 +126,7 @@ exports.handler = async function(event) {
 
 -------
 
-### 4. Understand the DDB interface capability
+### 4. Develop CRUD capability for DDB
 
 1. While we evaluate the Lambda CRUD functions, they will interface directly to the DDB table. We should examime WHAT capability does DDB SDK provide so we can determine how to interact with the Tables. 
 
@@ -235,4 +235,76 @@ Ensure that all the required import statements are provided.
 import { DynamoDBClient, GetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
+```
+
+6. In above steps we created APIs to "GET" products. Lets now add functionality to "POST" (aka Create) products. To do this begin with modifying our `switch` statement to include instances where our `event.pathParametes` when providing `POST` method, will know what do do. Also add a `default` case as well. Update our `switch` code block as follows: 
+
+```js
+    switch(event.httpmethod) {
+        case "GET": 
+            if(event.pathParameters != null) {
+                body = await getProduct(event.pathParameters.id)
+            } else {
+                body = await getAllProducts()
+            }
+        case "POST": 
+            body = await createProduct(event)
+            break
+        default: 
+            throw new Error(`Unsupported route: ${event.httpMethod}`)
+    }
+```
+
+7. Now create the implementation for our `createProduct()` function. Input the following code: 
+
+```js
+const createProduct = async (event) => {
+    console.log(`createProduct function event: ${event}`)
+    try {
+        const requestBody = JSON.parse(event.body)
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            Item: marshall( requestBody || {} )
+        }
+        const createResult = await DynamoDBClient.send(new PutItemCommand(params))
+        console.log(createResult)
+        return createResult
+    } catch (error) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+8. When we create a new `product` we want to ensure that the `product` has a unique id, therefore we will use the `uuid` library to assign a unique id to the record. To do this input the following code: 
+
+```js
+// enter import statement at top of index.js file
+import { v4 as uuidv4 } from 'uuid'
+```
+
+Now utilize the uuid import within the `createProduct()` method. Update the prior `createProduct()` code block to the following code: 
+
+```js 
+const createProduct = async (event) => {
+    console.log(`createProduct function event: ${event}`)
+    try {
+        const productRequest = JSON.parse(event.body)
+
+        // create a unique uuid and assing to id field
+        const productId = uuidv4()
+        productRequest.id = productId
+
+        const params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            Item: marshall( productRequest || {} )
+        }
+        const createResult = await DynamoDBClient.send(new PutItemCommand(params))
+        console.log(createResult)
+        return createResult
+    } catch (error) {
+        console.log(e)
+        throw e
+    }
+}
 ```
