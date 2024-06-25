@@ -34,7 +34,7 @@ A few reasons to point out as to why we will use AWS SDK
 ### 2. Add `package.json` and dependencies to your `product` service
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4e01ad22-6fa3-4452-a8de-475a9869cffa">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/cac4d0a6-79a7-4539-bf3f-ab41f6f4d7e7">
 </p>
 
 1. First we will be install `npm` dependencies within our `products` ms. We can manage our dependencies with a `package.json` file. Create this file within your `/src/product` dir. 
