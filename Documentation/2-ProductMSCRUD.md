@@ -34,7 +34,7 @@ A few reasons to point out as to why we will use AWS SDK
 ### 2. Add `package.json` and dependencies to your `product` service
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/10ffd20a-2a40-40a6-bf08-2ed505762ad0">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/da4c4138-92de-4137-857b-a53cc115fabe">
 </p>
 
 1. First we will be install `npm` dependencies within our `products` ms. We can manage our dependencies with a `package.json` file. Create this file within your `/src/product` dir. 
@@ -131,7 +131,7 @@ exports.handler = async function(event) {
 1. While we evaluate the Lambda CRUD functions, they will interface directly to the DDB table. We should examime WHAT capability does DDB SDK provide so we can determine how to interact with the Tables. 
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/da4c4138-92de-4137-857b-a53cc115fabe">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/10ffd20a-2a40-40a6-bf08-2ed505762ad0">
 </p>
 
 2. You can utilize the `Amazon DynamoDB` documentaiton for input on API operations. See documentation [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html). The 4 primary methods that we will use from this documenation and we will incorporate to the lambda functions to interface to DDB are the following: 
