@@ -450,4 +450,118 @@ To enable this, update our `switch` block with the following code:
 
 > NOTE: Note that in our `switch` statement, we are starting with the URL query that is literally the "longest". This is on purpose as NodeJS will attempt to match the first instance from "north" / "south" of the file, that matches the condition. Therefore the placement of URL endpoints does matter. 
 
--------
+
+Now we need to implment the logic for `getProductsByCategory`. Input the following code: 
+
+```js
+const getProductSbyCategory = async (event) => {
+    console.log(`getProductsByCategory`)
+
+    try {
+        // GET product/1234?category=Phone
+        const productId = event.pathParameters.id
+        const category = event.queryStringParameters.category
+
+        const params = {
+            KeyConditionExpression: "id = :productId",
+            FilterExpression: "contains (category, :category)",
+            ExpressionAttributeValues: {
+                ":productId": { S: productId },
+                ":category": { S: category }
+            },
+            TableName: process.env.DYNAMODB_TABLE_NAME
+        }    
+
+        const { Items } = await DynamoDBClient.send(new QueryCommand(params))
+
+        console.log(Items) 
+        return Items.map((item) => unmarshall(item))
+
+    } catch (e) {
+        console.error(e)
+        throw e
+    }
+}
+```
+
+14. Now we need to make the return value dynamic. In the current code construct we are always returning a 200 with the same console message. We should enable the `return` statement in our lambda to return the appropriate HTTP status and message depending on the method called.
+
+To do this we are going to first implement a `try/catch` block for our switch logic. Implement the following code to catch the error. 
+
+```js
+    try {
+        
+    } catch (e) {
+        console.log(e)
+        return{
+            statusCode: 500, 
+            body: JSON.stringify({
+                message: "Failed to peform operation.",
+                errorMsg: e.message,
+                errorStack: e.errorStack
+            })
+        }
+    }
+```
+
+Now within the `try` block copy/paste our existing `switch` block, makiing the total block look like this:
+
+```js
+    try {
+        switch(event.httpmethod) {
+            case "GET": 
+                if(event.queryStringParameters != null) {
+                    body = await getProductSbyCategory(event)   // GET product/1234?category=Product
+                }
+                else if(event.pathParameters != null) {
+                    body = await getProduct(event.pathParameters.id)   // GET product/{id}
+                } else {
+                    body = await getAllProducts()   // GET product
+                }
+            case "POST": 
+                body = await createProduct(event)   // POST product
+                break
+            case "DELETE":
+                body = await deleteProduct(event.pathParameters.id)   // DELETE product/{id}
+                break
+            case "PUT": 
+                body = await updateProduct(event.pathParameters.id)   // PUT product/{id}
+                break
+            default: 
+                throw new Error(`Unsupported route: ${event.httpMethod}`)
+        }
+        return {
+            statusCode: 200,
+            headers: { "Content-Type": "text/plain" },
+            body: `Hello from Product Microservice! You have hit the ${event.path}\n`
+        }
+    } catch (e) {
+        console.log(e)
+        return{
+            statusCode: 500, 
+            body: JSON.stringify({
+                message: "Failed to peform operation.",
+                errorMsg: e.message,
+                errorStack: e.errorStack
+            })
+        }
+    }
+```
+
+------
+
+### 5. Create a DDB client 
+
+1. In order to help abstract away the SDK changes that can occur and for performance reasons (reduces the package size of our lambda function and allows for reduced execution time), you want to create a `ddbClient` that refers to the AWS SDK. In your `src/product` dir, create a file called `ddbClient.js` and input the following code: 
+
+```js
+// Create service client module using ES6 syntax
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+// Create an Amazon DDB serivce client object
+const ddbClient = new DynamoDBClient()
+export { ddbClient }
+```
+
+2. Now go back into `src/product/index.js` and import the `ddbClient`, and replace instances where the default AWS SDK `DynamoDBClient` is refenenced. Use the `Ctrl + F` Replace functionality to execute a _Find and Replace_ action.
+
+
