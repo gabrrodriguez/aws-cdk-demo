@@ -564,6 +564,26 @@ export { ddbClient }
 
 2. Now go back into `src/product/index.js` and import the `ddbClient`, and replace instances where the default AWS SDK `DynamoDBClient` is refenenced. Use the `Ctrl + F` Replace functionality to execute a _Find and Replace_ action.
 
+------
+
+### 6. Postman Testing 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5e7a1bb9-4712-4d78-8fff-db5b1a8b5e4d">
+</p>
+
+Congratulations ... take a look at this depiction as a representation of what you've done. 
+1. You've use `AWS CDK` to create a `dir` structure for your project. 
+2. Within your project you used the `bin` and `lib` directories to detail your `AWSMicroserviceStack`. Which is all the infrastructure requests. 
+3. Using `AWS CDK` you will send the stack requirements to `CloudFormation`, which will utilized a CF `Stack` to deploy your resources. 
+4. In addition to your resources specified in those files, you have also indicated to `CloudFormation` via the `AWS SDK` what functionality you want to include in your `product` microservice. Within the `src/product/src/index.js` file you have specified: 
+- [ ] AWS API Gateway with specified endpoints
+- [ ] AWS Lambda and associated endpoint logic for all your CRUD functionality
+- [ ] AWS DynamoDB table
+5. You've used `Postman` which is a client to process your API requests to API Gateway, and document your Requests so you can test and reuse. 
+6. Because all this configuration is implemented via code, you can CREATE and DESTROY this entire construct so you are not billed unnecessarily. 
+
+------ 
 
 ### 6. Troubleshooting
 
