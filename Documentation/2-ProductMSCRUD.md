@@ -548,6 +548,18 @@ Now within the `try` block copy/paste our existing `switch` block, makiing the t
     }
 ```
 
+15. Last thing, in our `switch` block, we are using the variable `body` without initializing it. We need to add this line to the top of our code before the `switch` statement. 
+
+```js
+exports.handler = async function(event) {
+    console.log("request:", JSON.stringify(event, undefined, 2));
+    let body = {};   // initialize body our you will receive a runtime error
+    try {
+      switch (event.httpMethod) {
+        case "GET":
+// ...
+```
+
 ------
 
 ### 5. Create a DDB client 
@@ -566,7 +578,7 @@ export { ddbClient }
 
 ------
 
-### 6. Postman Testing 
+### 6. Check-In on your Progress
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/5e7a1bb9-4712-4d78-8fff-db5b1a8b5e4d">
