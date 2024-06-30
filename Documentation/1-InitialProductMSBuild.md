@@ -14,7 +14,29 @@ This is the architecture we will develop within this demo. This will be complete
 
 ### Init Project
 
-- [ ] Open a terminal session and `init` a project
+We will be using the AWS CDK, which in a depiction does the following to help initiate our Cloud development. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/70b94dff-1609-4c1b-89e8-8fea6a82657d">
+</p>
+
+The primary components of this build construct are as follows: 
+
+##### Apps
+> Include everything needed to deploy your app to a cloud environment. 
+
+##### Stack
+> The unit of deployment in the AWS CDK is called a stack.
+
+##### Constructs 
+> The basic builiding blocks of AWS CDK apps. A construct represents a "cloud component". 
+
+##### Environments
+> Each stack instance in your AWS CDK app is explicitly or implicitly associated with an environment. 
+
+-------
+
+- [ ] To initiate this process, Open a terminal session and `init` a project
 ```s 
 cdk init app --language=typescript
 ```
