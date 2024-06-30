@@ -565,3 +565,6 @@ export { ddbClient }
 2. Now go back into `src/product/index.js` and import the `ddbClient`, and replace instances where the default AWS SDK `DynamoDBClient` is refenenced. Use the `Ctrl + F` Replace functionality to execute a _Find and Replace_ action.
 
 
+### 6. Troubleshooting
+
+1. For some reason you may run into the Cloudformation configuration being cached and updates you implement will not take. To fix this, in you `cdk.out` and you will see a `.cache` folder with sub-files. Delete this dir if you find that your prior deployment configs are being `cached` and run `cdk deploy` which should account for the problem.
