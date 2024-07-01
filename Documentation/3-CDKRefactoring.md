@@ -20,6 +20,8 @@ Essentially the recommendation is to utilize our code file construct and seperat
 
 ## Procedure
 
+### 1. Refactor the `product` database
+
 1. Under the `/lib` dir, create a file called `database.ts` and input the following code.
 
 ```js
@@ -161,3 +163,155 @@ Ensure that you also update the references in the `/lib/aws-microservices-stack.
 // ...
 ```
 
+------
+
+### 2. Refactor the `product` microservice
+
+1. Create a file called `/lib/microservice.ts` and input the following code: 
+
+```js
+import { Construct } from 'constructs'
+
+export class SwnMicroservices extends Construct {
+    constructor ( scope: Construct, id: string ){
+        super(scope, id)
+    }
+}
+```
+
+2. Now lets copy/paste our existing code from our `lib/aws-microservices-stack.ts` file to our `lib/microservice.ts` file: 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/df4b3e05-736c-40cf-9f2d-7b92b9745a80">
+</p>
+
+3. You'll see a series of errors from our copy/paste. Some of which we can resolve by importing the correct library references, you can do this for all but the `database` variable reference. 
+
+4. So to fix the `database` we need to do 3 things: 1. We need to create an `Interface` class that will pass an attribute we can use (productTable) & 2. We need to incorporate the `interface` as a Props parameter to our `SwnMicroservice` class 3. We need to call the `props` to reference the `database.productTable`. 
+
+4a. For Step 1 implement the following code above the class definition of `SwnMicroserices`
+
+```js
+// ... 
+import { join } from 'path';
+
+interface SwnMicroservicesProps {
+    productTable: ITable
+}
+
+export class SwnMicroservices extends Construct {
+    constructor ( scope: Construct, id: string ){
+// ... 
+```
+
+4b. For Step 2, the `SwnMicroserviceProps` interface we just created needs to be passed as a parameter to the `SwnMicroservices` constructor. Input the following code: 
+
+```js
+// ... 
+export class SwnMicroservices extends Construct {
+    constructor ( scope: Construct, id: string, props: SwnMicroservicesProps ){
+        super(scope, id)
+// ...
+```
+
+4c. Now we can reference `props` as a replacement to `database` in our implemenation. Replace the remainder of the code block with this: 
+
+```js
+export class SwnMicroservices extends Construct {
+    constructor ( scope: Construct, id: string, props: SwnMicroservicesProps ){
+        super(scope, id)
+
+        const nodeJsFunctionProps: NodejsFunctionProps = {
+            bundling: {
+              externalModules: [
+                'aws-sdk'
+              ]
+            },
+            environment: {
+              PRIMARY_KEY: 'id',
+              DYNAMODB_TABLE_NAME: props.productTable.tableName
+            },
+            runtime: Runtime.NODEJS_16_X
+          }
+      
+          // Product microservices lambda function
+          const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+            entry: join(__dirname, `/../src/product/index.js`),
+            ...nodeJsFunctionProps,
+          })
+      
+          props.productTable.grantReadWriteData(productFunction);
+    }
+}
+```
+
+5. Now lets go back to the `aws-microservices-stack.ts` file and refactor this. To do this we will repeat the same 2 steps we executed when refactoring the database.ts file. 1. Comment out the code that was moved & 2. create an instance of the `SwnMicroservices` class as a reference. 
+
+5a. Go to `/lib/aws-microservices-stack.ts` and comment out the following code: 
+
+```js
+    // const nodeJsFunctionProps: NodejsFunctionProps = {
+    //   bundling: {
+    //     externalModules: [
+    //       'aws-sdk'
+    //     ]
+    //   },
+    //   environment: {
+    //     PRIMARY_KEY: 'id',
+    //     DYNAMODB_TABLE_NAME: database.productTable.tableName
+    //   },
+    //   runtime: Runtime.NODEJS_16_X
+    // }
+
+    // // Product microservices lambda function
+    // const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+    //   entry: join(__dirname, `/../src/product/index.js`),
+    //   ...nodeJsFunctionProps,
+    // })
+
+    // database.productTable.grantReadWriteData(productFunction);
+```
+
+5b. Craete a new istance of `SwnMicroserices` class. 
+
+```js
+    const microservice = new SwnMicroservices(this, 'Microservices', {
+      productTable: database.productTable
+    })
+```
+
+6. If you scroll down we still have one exception to remedy, which is the same issue that we experienced in Step 4 in the `Refactor the database` section. The `handler` is referencing `productFuntion` which is a reference to the `SwnMicroservice` that we have not created or made publically accessible. 
+
+```js
+    // Product microservices api gateway
+    const apigw = new LambdaRestApi(this, 'productApi', {
+      restApiName: 'ProductSerivce',
+      handler: productFunction,
+      proxy: false
+    });
+```
+
+To fix this we need to once again create a `public` `readonly` attribute in the `SwnMicroservice` class. Add the following code in `lib/microservice.ts`: 
+
+```js
+// ... 
+export class SwnMicroservices extends Construct {
+
+    public readonly productMicroservice: NodejsFunction
+
+    constructor ( scope: Construct, id: string, props: SwnMicroservicesProps ){
+        super(scope, id)
+// ...
+```
+
+We also need to make a reference to `this` and the `productMicroservice` we just created. 
+
+```js
+  this.productMicroservice = productFunction
+```
+
+7. Finally you need to replace the reference in the `lib/aws-microservice-stack.ts`. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/329d5614-a931-4a6b-a950-3d961b352f17">
+</p>

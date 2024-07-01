@@ -6,12 +6,17 @@ import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-node
 import { Construct } from 'constructs';
 import { join } from 'path';
 import { SwnDatabase } from './database';
+import { SwnMicroservices } from './microservices';
 
 export class AwsMicroservicesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const database = new SwnDatabase(this, 'Database')
+
+    const microservice = new SwnMicroservices(this, 'Microservices', {
+      productTable: database.productTable
+    })
 
     // const productTable = new Table(this, 'product', {
     //   partitionKey: {
@@ -23,31 +28,31 @@ export class AwsMicroservicesStack extends Stack {
     //   billingMode: BillingMode.PAY_PER_REQUEST
     // });
 
-    const nodeJsFunctionProps: NodejsFunctionProps = {
-      bundling: {
-        externalModules: [
-          'aws-sdk'
-        ]
-      },
-      environment: {
-        PRIMARY_KEY: 'id',
-        DYNAMODB_TABLE_NAME: database.productTable.tableName
-      },
-      runtime: Runtime.NODEJS_16_X
-    }
+    // const nodeJsFunctionProps: NodejsFunctionProps = {
+    //   bundling: {
+    //     externalModules: [
+    //       'aws-sdk'
+    //     ]
+    //   },
+    //   environment: {
+    //     PRIMARY_KEY: 'id',
+    //     DYNAMODB_TABLE_NAME: database.productTable.tableName
+    //   },
+    //   runtime: Runtime.NODEJS_16_X
+    // }
 
-    // Product microservices lambda function
-    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
-      entry: join(__dirname, `/../src/product/index.js`),
-      ...nodeJsFunctionProps,
-    })
+    // // Product microservices lambda function
+    // const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+    //   entry: join(__dirname, `/../src/product/index.js`),
+    //   ...nodeJsFunctionProps,
+    // })
 
-    database.productTable.grantReadWriteData(productFunction);
+    // database.productTable.grantReadWriteData(productFunction);
 
     // Product microservices api gateway
     const apigw = new LambdaRestApi(this, 'productApi', {
       restApiName: 'ProductSerivce',
-      handler: productFunction,
+      handler: microservice.productMicroservice,
       proxy: false
     });
 
