@@ -315,3 +315,22 @@ We also need to make a reference to `this` and the `productMicroservice` we just
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/329d5614-a931-4a6b-a950-3d961b352f17">
 </p>
+
+-----------
+
+### 3. Refactor the `product` API Gateway
+
+1. Create a file called `/lib/apigateway.ts` and input the following code: 
+
+```js 
+import { Construct } from "constructs";
+
+export class SwnApiGateway extends Construct {
+    constructor(scope: Construct, id: string) {
+        super(scope, id)
+    
+    }
+}
+```
+
+2. 
