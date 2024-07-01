@@ -33,6 +33,8 @@ export class SwnDatabase extends Construct {
 }
 ```
 
+> NOTE: The `Swn` prefix is a generic prefix associated with the application we are building this for. It could be anything. The point I'm highlighting with this is to ensure that there is some means of generating a distinguishable naming convention as the resources are built.
+
 2. Now move over our existing `product` table, created in `aws-microservices-stack.ts` file. Copy/paste into our new `database.ts` file: 
 
 <p align="center">
@@ -92,3 +94,70 @@ export class AwsMicroservicesStack extends Stack {
     // });
 // ...
 ```
+
+4. When you implement this change, you can see as you scroll down the `aws-microservice-stack.ts` file that there is still an exception being thrown with the use of environment variables that we previously set with the `productTable` reference. This is b/c we no longer have a `productTable` variable within this class (we've commented it out). 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/259bdc52-ab0a-4910-b9b6-aef697edebe4">
+</p>
+
+If you look back at the `SwnDatabase` class, you see that we use the `productTable` attribute within the class construct. We simply need to make it publically avaialble so when this class is used in other code blocks, we can reference it. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/1efb7cba-f152-4133-a17b-3cb285c034e3">
+</p>
+
+The way we will fix this is by implementing a public field. Update the `/lib/database.ts` with the following code: 
+
+```js
+import { RemovalPolicy } from "aws-cdk-lib";
+import { AttributeType, BillingMode, ITable, Table } from "aws-cdk-lib/aws-dynamodb";
+import { Construct } from "constructs";
+
+export class SwnDatabase extends Construct {
+  public readonly productTable: ITable
+
+    constructor(scope: Construct, id: string ){
+        super(scope, id)
+        // Product DynamoDB Table Creation
+        const productTable = new Table(this, 'product', {
+            partitionKey: {
+              name: 'id',
+              type: AttributeType.STRING
+            },
+            tableName: 'product',
+            removalPolicy: RemovalPolicy.DESTROY,
+            billingMode: BillingMode.PAY_PER_REQUEST
+          });
+        this.productTable = productTable
+    }
+}
+```
+
+Ensure that you also update the references in the `/lib/aws-microservices-stack.ts` by adding the prefix `database.productTable` to the references in the file: 
+
+```js
+// ...
+    const nodeJsFunctionProps: NodejsFunctionProps = {
+      bundling: {
+        externalModules: [
+          'aws-sdk'
+        ]
+      },
+      environment: {
+        PRIMARY_KEY: 'id',
+        DYNAMODB_TABLE_NAME: database.productTable.tableName
+      },
+      runtime: Runtime.NODEJS_16_X
+    }
+
+    // Product microservices lambda function
+    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+      entry: join(__dirname, `/../src/product/index.js`),
+      ...nodeJsFunctionProps,
+    })
+
+    database.productTable.grantReadWriteData(productFunction);
+// ...
+```
+

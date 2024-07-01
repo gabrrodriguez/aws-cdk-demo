@@ -31,7 +31,7 @@ export class AwsMicroservicesStack extends Stack {
       },
       environment: {
         PRIMARY_KEY: 'id',
-        DYNAMODB_TABLE_NAME: productTable.tableName
+        DYNAMODB_TABLE_NAME: database.productTable.tableName
       },
       runtime: Runtime.NODEJS_16_X
     }
@@ -42,7 +42,7 @@ export class AwsMicroservicesStack extends Stack {
       ...nodeJsFunctionProps,
     })
 
-    productTable.grantReadWriteData(productFunction);
+    database.productTable.grantReadWriteData(productFunction);
 
     // Product microservices api gateway
     const apigw = new LambdaRestApi(this, 'productApi', {
