@@ -333,4 +333,113 @@ export class SwnApiGateway extends Construct {
 }
 ```
 
-2. 
+2. Now Copy/Paste our API Gateway code from `lib/aws-microservices-stack.ts` file to `lib/apigateway.ts` file. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/8587dbbc-4015-497f-a9cf-2a0bdd14ce15">
+</p>
+
+3. Just like before you will have errors, some can be resolved by `Control+Space Bar` and an import of the corresponding AWS SDK library. Others we will have to construct attributes &/or an interface to refer to them. 
+
+In this case we will create an interface. At the top of the file input the following code: 
+
+```js
+interface SwnApiGatewayProps {
+    productMicroservice: IFunction
+}
+```
+
+3a. Now paste the props in our constructor class so we can refernce them in our codeblock: 
+
+```js
+// ...
+     constructor(scope: Construct, id: string, props: SwnApiGatewayProps ) {
+// ... 
+```
+
+3b. Now we can make a reference to props in our `handler`
+
+```js
+    const apigw = new LambdaRestApi(this, 'productApi', {
+        restApiName: 'ProductSerivce',
+        handler: props.productMicroservice,
+        proxy: false
+      });
+```
+
+4. Finish our refactoring process by commenting out all the prior code in our `lib/aws-microservices-stack.ts` file. 
+
+```js
+    // // Product microservices api gateway
+    // const apigw = new LambdaRestApi(this, 'productApi', {
+    //   restApiName: 'ProductSerivce',
+    //   handler: microservice.productMicroservice,
+    //   proxy: false
+    // });
+
+    // // root name = product
+    // const product = apigw.root.addResource('product')
+
+    // // GET /product
+    // product.addMethod('GET')
+
+    // // POST /product
+    // product.addMethod('POST')
+
+    // // Single product with id parameter
+    // const singleProduct = product.addResource('{id}')
+
+    // // GET /product/{id}
+    // singleProduct.addMethod('GET')
+
+    // // PUT /product/{id}
+    // singleProduct.addMethod('PUT')
+
+    // // DELETE /product/{id}
+    // singleProduct.addMethod('DELETE')
+```
+
+5. Finally we need to instantiate a new API Gateway instance with our newly created class.
+
+```js
+    const apigateway = new SwnApiGateway(this, 'ApiGateway', {
+      productMicroservice: microservice.productMicroservice
+    })
+```
+---------
+
+### 4. Final Clean up & Test
+
+1. Now that the refactoring process is understood, you can delete all the commented code from the `lib/aws-microservice-stack.ts`. The final code should look like this: 
+
+```js
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+import { SwnDatabase } from './database';
+import { SwnMicroservices } from './microservices';
+import { SwnApiGateway } from './apigateway';
+
+export class AwsMicroservicesStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    const database = new SwnDatabase(this, 'Database')
+
+    const microservice = new SwnMicroservices(this, 'Microservices', {
+      productTable: database.productTable
+    })
+
+    const apigateway = new SwnApiGateway(this, 'ApiGateway', {
+      productMicroservice: microservice.productMicroservice
+    })
+  }
+}
+```
+
+2. Ensure that you have your `Docker Daemon` running and then run the following command: 
+
+```js
+cdk synth
+```
+
