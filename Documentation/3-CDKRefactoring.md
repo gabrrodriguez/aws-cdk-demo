@@ -16,3 +16,79 @@ Essentially the recommendation is to utilize our code file construct and seperat
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/8fbf5c50-2b35-4cc7-9b08-3b3f8c7d35a6">
 </p>
 
+--------
+
+## Procedure
+
+1. Under the `/lib` dir, create a file called `database.ts` and input the following code.
+
+```js
+import { Construct } from "constructs";
+
+export class SwnDatabase extends Construct {
+    constructor(scope: Construct, id: string ){
+        super(scope, id)
+        
+    }
+}
+```
+
+2. Now move over our existing `product` table, created in `aws-microservices-stack.ts` file. Copy/paste into our new `database.ts` file: 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/9ecf1db5-6156-4161-938b-7b125b46b904">
+</p>
+
+The updated `database.ts` file should look like this: 
+
+```js
+import { Construct } from "constructs";
+
+export class SwnDatabase extends Construct {
+    constructor(scope: Construct, id: string ){
+        super(scope, id)
+
+        // Product DynamoDB Table Creation
+        const productTable = new Table(this, 'product', {
+            partitionKey: {
+              name: 'id',
+              type: AttributeType.STRING
+            },
+            tableName: 'product',
+            removalPolicy: RemovalPolicy.DESTROY,
+            billingMode: BillingMode.PAY_PER_REQUEST
+          });
+    }
+}
+```
+
+> NOTE: Correct the errors in the `database.ts` file, by importing the library references. On a MacOS you can do so by selecting the end of the word and pressing `Control+Space Bar` which should show the reference which you can select and the import will occur for you. 
+
+
+3. Now go back to the `aws-microservice-stack.ts` and ensure the reference to the newly created `SwnDatabase` is configured. 
+
+- [ ] Comment out the old code
+- [ ] Create a new instance of the `SwnDatabase` and assign it to the variable name `database`
+- [ ] import the `SwnDatabase` from the `./database.ts` file
+
+```js
+// ...
+import { SwnDatabase } from './database';
+
+export class AwsMicroservicesStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    const database = new SwnDatabase(this, 'Database')
+
+    // const productTable = new Table(this, 'product', {
+    //   partitionKey: {
+    //     name: 'id',
+    //     type: AttributeType.STRING
+    //   },
+    //   tableName: 'product',
+    //   removalPolicy: RemovalPolicy.DESTROY,
+    //   billingMode: BillingMode.PAY_PER_REQUEST
+    // });
+// ...
+```

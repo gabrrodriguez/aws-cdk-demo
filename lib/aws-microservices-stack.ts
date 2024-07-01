@@ -5,20 +5,23 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
+import { SwnDatabase } from './database';
 
 export class AwsMicroservicesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const productTable = new Table(this, 'product', {
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING
-      },
-      tableName: 'product',
-      removalPolicy: RemovalPolicy.DESTROY,
-      billingMode: BillingMode.PAY_PER_REQUEST
-    });
+    const database = new SwnDatabase(this, 'Database')
+
+    // const productTable = new Table(this, 'product', {
+    //   partitionKey: {
+    //     name: 'id',
+    //     type: AttributeType.STRING
+    //   },
+    //   tableName: 'product',
+    //   removalPolicy: RemovalPolicy.DESTROY,
+    //   billingMode: BillingMode.PAY_PER_REQUEST
+    // });
 
     const nodeJsFunctionProps: NodejsFunctionProps = {
       bundling: {
