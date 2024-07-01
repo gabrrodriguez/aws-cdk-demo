@@ -443,3 +443,30 @@ export class AwsMicroservicesStack extends Stack {
 cdk synth
 ```
 
+3. You can then run to view all the resources we are about to create.
+
+```js
+cdk diff
+cdk deploy
+```
+
+4. When the application finishes, you can go to `Postman` to once again validate your endpoints and the associated functionality still works after the refactoring. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/39ad8ad0-3d6b-4f81-9a86-4ab4d3cd30b1">
+</p>
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/7d0e09aa-8b81-4d94-801d-7eb08ce2465b">
+</p>
+
+
+5. Finally after you valiated functionality, you should delete your resources. Run the following command: 
+
+```js
+cdk destroy
+```
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/23713753-b587-4425-83bc-254b436c00cd">
+</p>
