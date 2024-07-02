@@ -124,4 +124,115 @@ export class SwnDatabase extends Construct {
 
 ### 1. Lambda build for `basket`
 
-1. 
+1. Open the `microservice.ts` file, and we will implement the same `extract pattern` that we used in the `database.ts` file. First create a reference to the 2 Function create methods that we will build. 
+
+```js
+  constructor ( scope: Construct, id: string, props: SwnMicroservicesProps ){
+      super(scope, id)
+      this.productMicroservice = this.createProductFunction(props.productTable)
+      this.basketMicroservice = this.createBasketFunction(props.basketTable)
+// ...
+```
+
+2. Next create an additional attribute for this class to publically make the `basketMicroservice` available: 
+
+```js
+  public readonly productMicroservice: NodejsFunction
+  public readonly basketMicroservice: NodejsFunction
+  ```
+
+3. Now we need to ensure that this `basketMicroservice` will also have props available in the interface. 
+
+```js
+interface SwnMicroservicesProps {
+    productTable: ITable
+    basketTable: ITable
+}
+```
+
+4. Now after the constructor, create the 2 functions: 
+
+```js 
+  private createProductFunction(productTable: ITable) : NodejsFunction {
+
+    return productFunction
+  }
+
+  private createBasketFunction(basketTable: ITable) : NodejsFunction {
+
+    return basketFunction
+  }
+```
+
+5. Now populate the `createProductFunction` 
+
+```js
+  private createProductFunction(productTable: ITable) : NodejsFunction {
+    const nodeJsFunctionProps: NodejsFunctionProps = {
+      bundling: {
+        externalModules: [
+          'aws-sdk'
+        ]
+      },
+      environment: {
+        PRIMARY_KEY: 'id',
+        DYNAMODB_TABLE_NAME: productTable.tableName
+      },
+      runtime: Runtime.NODEJS_16_X
+    }
+
+    // Product microservices lambda function
+    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+      entry: join(__dirname, `/../src/product/index.js`),
+      ...nodeJsFunctionProps,
+    })
+
+    productTable.grantReadWriteData(productFunction)
+
+    return productFunction
+  }
+```
+
+6. For the `basketFunction` we are replicating the code construct from `productFunction` but changing the references to be to the `baseket` Objects along with a change to the Primary Key in our DDB table. 
+
+```js
+  private createBasketFunction(basketTable: ITable) : NodejsFunction {
+    const nodeJsFunctionProps: NodejsFunctionProps = {
+      bundling: {
+        externalModules: [
+          'aws-sdk'
+        ]
+      },
+      environment: {
+        PRIMARY_KEY: 'userName',
+        DYNAMODB_TABLE_NAME: basketTable.tableName
+      },
+      runtime: Runtime.NODEJS_16_X
+    }
+    
+    // Product microservices lambda function
+    const basketFunction = new NodejsFunction(this, 'productLambdaFunction', {
+      entry: join(__dirname, `/../src/basket/index.js`),
+      ...nodeJsFunctionProps,
+    })
+    
+    basketTable.grantReadWriteData(basketFunction)
+
+    return basketFunction
+  }
+```
+
+7. Finally, if you return to your `aws-microservices-stack.ts` file, you will see an error. This is because we added a `basketTable` to our interface, but we didn't update the reference. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/10f06644-7d5a-4695-a31e-0be55a834ea0">
+</p>
+
+To fix this, in the `aws-microservices-stack.ts` file update the `microservice` create statement as follows: 
+
+```js
+    const microservice = new SwnMicroservices(this, 'Microservices', {
+      productTable: database.productTable,
+      basketTable: database.basketTable
+    })
+```
