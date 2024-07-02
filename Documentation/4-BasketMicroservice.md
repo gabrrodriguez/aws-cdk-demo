@@ -416,3 +416,9 @@ private createBasketApi(basketMicroservice: IFunction) {
     })
 ```
 -------
+
+### 5. Lets deploy and Test
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/be1c0417-3d7f-49b5-aa88-d303dc38e34b">
+</p>
