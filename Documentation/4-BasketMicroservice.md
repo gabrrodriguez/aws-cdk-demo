@@ -422,3 +422,19 @@ private createBasketApi(basketMicroservice: IFunction) {
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/be1c0417-3d7f-49b5-aa88-d303dc38e34b">
 </p>
+
+1. To deploy run your `cdk` sequence of commands
+
+```js
+cdk synth
+cdk diff
+cdk deploy
+```
+
+2. Notice that at the deployment there are 2 API endpoints created for us. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/ff061609-335a-46f7-90ff-9fcc482bccaa">
+</p>
+
+3. 
