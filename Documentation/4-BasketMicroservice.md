@@ -261,7 +261,7 @@ exports.handler = async function(event) {
 #### 4. Create the API Gateway infra for `basket`
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/093c1867-0c9a-4a2a-85b6-e7a8357975f0">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/bca9279b-4342-47a4-8a9a-fcb40ee40f2e">
 </p>
 
 1. Go to the `apigateway.ts` file. Here we are going to use psuedo-code to design our basket endpoints. 
@@ -415,3 +415,4 @@ private createBasketApi(basketMicroservice: IFunction) {
       basketMicroservice: microservice.productMicroservice
     })
 ```
+-------
