@@ -124,6 +124,10 @@ export class SwnDatabase extends Construct {
 
 ### 1. Lambda build for `basket`
 
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/fbb66220-1bcf-470a-8504-e96fc768708d">
+</p>
+
 1. Open the `microservice.ts` file, and we will implement the same `extract pattern` that we used in the `database.ts` file. First create a reference to the 2 Function create methods that we will build. 
 
 ```js
@@ -236,3 +240,4 @@ To fix this, in the `aws-microservices-stack.ts` file update the `microservice` 
       basketTable: database.basketTable
     })
 ```
+-------
