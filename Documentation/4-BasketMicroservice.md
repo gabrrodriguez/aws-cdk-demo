@@ -122,7 +122,7 @@ export class SwnDatabase extends Construct {
 
 -------
 
-### 1. Lambda build for `basket`
+### 2. Lambda build for `basket`
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/fbb66220-1bcf-470a-8504-e96fc768708d">
@@ -241,3 +241,177 @@ To fix this, in the `aws-microservices-stack.ts` file update the `microservice` 
     })
 ```
 -------
+
+### 3. Create the boilerplate Lambda `handler` method for `basket` service
+
+1. Create a file in the `/src/basket` folder called `index.js` and input the following code:
+
+```js
+exports.handler = async function(event) {
+    console.log("request: ", JSON.stringify(event, undefined, 2))
+    return{
+        statusCode: 200,
+        headers: { "Content-Type": "text/plain" },
+        body: `Hello from Basket! You're hit ${event.path}\n`
+    }
+}
+```
+--------
+
+#### 4. Create the API Gateway infra for `basket`
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/093c1867-0c9a-4a2a-85b6-e7a8357975f0">
+</p>
+
+1. Go to the `apigateway.ts` file. Here we are going to use psuedo-code to design our basket endpoints. 
+
+```js
+    // Basket microservices api gateway
+    // root name = basket
+    // GET /basket
+    // POST /basket
+
+    // resource/name = /basket/{userName}
+    // GET /basket/{userName}
+    // DELETE /basket/{userName}
+
+    // POST /basket/checkout
+```
+
+2. Before we continue with the API Gateway build out, again its best to use the `extract pattern` to refactor our current class design. Change the existing code as follows. First create the two public attributes. 
+
+```js
+export class SwnApiGateway extends Construct {
+
+    constructor(scope: Construct, id: string, props: SwnApiGatewayProps ) {
+        super(scope, id)
+
+        this.createProductApi(props.productMicroservice)
+        this.createBasketApi(props.basketMicroservice)
+// ...
+```
+
+3. Make sure to modify the interface `SwnApiGatewayProps` to the following: 
+
+```js
+interface SwnApiGatewayProps {
+    productMicroservice: IFunction
+    basketMicroservice: IFunction
+}
+```
+
+4. Now create the methods to handle the `createProductApi()` and `createBasketApi()` methods: 
+
+```js
+    private createProductApi(productMicroservice: IFunction) {
+
+    }
+
+    private createBasketApi(basketMicroservice: IFunction) {
+
+    }
+```
+
+5. Copy/paste and populate the `createProductApi()` method with the following code: 
+
+```js
+    private createProductApi(productMicroservice: IFunction) {
+        // Product microservices api gateway
+        const apigw = new LambdaRestApi(this, 'productApi', {
+            restApiName: 'ProductSerivce',
+            handler: productMicroservice,
+            proxy: false
+        });
+
+        // root name = product
+        const product = apigw.root.addResource('product')
+
+        // GET /product
+        product.addMethod('GET')
+
+        // POST /product
+        product.addMethod('POST')
+
+        // Single product with id parameter
+        const singleProduct = product.addResource('{id}')
+
+        // GET /product/{id}
+        singleProduct.addMethod('GET')
+
+        // PUT /product/{id}
+        singleProduct.addMethod('PUT')
+
+        // DELETE /product/{id}
+        singleProduct.addMethod('DELETE')
+    }
+```
+
+6. Now we need to create the `createBasket()` method. Start by copy/paste the psuedo code to the method. 
+
+```js
+    private createBasketApi(basketMicroservice: IFunction) {
+        // Basket microservices api gateway
+        // root name = basket
+        // GET /basket
+        // POST /basket
+
+        // resource/name = /basket/{userName}
+        // GET /basket/{userName}
+        // DELETE /basket/{userName}
+
+        // resource/name = /basket/checkout
+        // POST /basket/checkout
+
+    }
+```
+
+7. Populate the psuedo code with actual implementation code: 
+
+```js
+private createBasketApi(basketMicroservice: IFunction) {
+        // Basket microservices api gateway
+        const apigw = new LambdaRestApi(this, 'basketApi', {
+            restApiName: 'BasketSerivce',
+            handler: basketMicroservice,
+            proxy: false
+        });
+
+        // root name = basket
+        const basket = apigw.root.addResource('basket')
+
+        // GET /basket
+        basket.addMethod('GET')
+
+        // POST /basket
+        basket.addMethod('POST')
+
+        // resource/name = /basket/{userName}
+        const singleBasket = basket.addResource('{username}')
+
+        // GET /basket/{userName}
+        singleBasket.addMethod('GET')
+
+        // DELETE /basket/{userName}
+        singleBasket.addMethod('DELETE')
+
+        // resource/name = /basket/checkout
+        const basketCheckout = basket.addResource('checkout')
+
+        // POST /basket/checkout
+        basketCheckout.addMethod('POST')   // expected payload: {userName: swn}
+    }
+```
+
+8. Last piece is we have to ensure that our Interface on the `apigateway.ts` file and the `aws-microservices-stack.ts` file have the same attributes: 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/0cd40014-8e38-4356-a83a-4402a75590da">
+</p>
+
+```js
+    const apigateway = new SwnApiGateway(this, 'ApiGateway', {
+      productMicroservice: microservice.productMicroservice,
+      basketMicroservice: microservice.productMicroservice
+    })
+```
