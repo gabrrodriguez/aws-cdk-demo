@@ -444,3 +444,282 @@ cdk deploy
 </p>
 
 ---------
+
+### 6. Add Logic to the `basket` lambdas
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/37de0f92-61e1-4fcc-8e50-0310c59464fa">
+</p>
+
+1. Nav to the `src/basket` dir, and create a file called `package.json`. Within that file input the following code: 
+
+```js
+{
+    "name": "@src/product",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+
+    }
+  }
+```
+
+2. Now in a terminal session (again make sure you are in the `/src/basket` dir) run the following commands: 
+
+```js
+npm install @aws-sdk/client-dynamodb
+npm install @aws-sdk/util-dynamodb
+```
+
+The command will input dependencies in your `package.json` file. This dir should now have a new dir called `node_modules`, `package-lock.json`, and following contents of the `package.json` file: 
+
+```js
+{
+    "name": "@src/product",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.609.0",
+        "@aws-sdk/util-dynamodb": "^3.609.0"
+    }
+}
+```
+
+3. Like we did in our product service we are going to create a `ddbClient` to help reduce the size of the package that will be uploaded to Lambda. This will simply be a utility file that will referene the AWS SDK `DynamoDBClient`.  Create a file called `ddbClient` and input the following content: 
+
+```js
+// Create service client module using ES6 syntax.
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+// Create an Amazon DynamoDB service client object.
+const ddbClient = new DynamoDBClient();
+export { ddbClient };
+```
+
+4. Now nav over to our `src/basket/index.js` file and let's input psuedo code to define what we are about to do to our Lambda. Recall in our `product` service we used a switch statement to process the `event` method and excecise the correct logic. We will do the same here. Input the following psuedo code above our `response` message: 
+
+```js
+exports.handler = async function(event) {
+    console.log("request: ", JSON.stringify(event, undefined, 2))
+    
+    // Todo - switch case event.httpMethod to perform add/remove basket actions
+    // and add checkout basket operations with using the ddbClient object
+    
+    // GET /basket
+    // POST /basket
+    // GET /basket/{userName}
+    // DELETE /basket/{userName}
+    // POST /basket/checkout
+
+    return{
+        statusCode: 200,
+        headers: { "Content-Type": "text/plain" },
+        body: `Hello from Basket! You're hit ${event.path}\n`
+    }
+}
+```
+
+5. Much of this same code was implemented in the `product` ms. Start by copy/pasting the following code to the `basket` service and then we will refactor. Extract the following code from `src/product/index.js` file and paste in the `src/basket/index.js` file. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/22730676-6177-4d16-a537-6faa7d0efb71">
+</p>
+
+6. Now refactor the code to account for just the requests we need. Your code should now look like this in the `src/basket/index.js` file: 
+
+```js
+exports.handler = async function(event) {
+    console.log("request: ", JSON.stringify(event, undefined, 2))
+    
+    // Todo - switch case event.httpMethod to perform add/remove basket actions
+    // and add checkout basket operations with using the ddbClient object
+    
+    // GET /basket +
+    // POST /basket +
+    // GET /basket/{userName} +
+    // DELETE /basket/{userName} +
+    // POST /basket/checkout +
+    let body = {};   // initialize body our you will receive a runtime error
+    try {
+      switch (event.httpMethod) {
+        case "GET":
+          if (event.pathParameters != null) {
+            body = await getBasket(event.pathParameters.userName);   // GET /basket/{userName}
+          } else {
+            body = await getAllBaskets(); // GET /basket
+          }
+          break;
+        case "POST":
+          if (event.pathParameters == "/basket/checkout") {
+            body = await checkoutBasket(event);   // POST /basket/checkout
+          } else {
+            body = await createBasket(event)   // POST /basket
+          }
+          break;
+        case "DELETE":
+          body = await deleteBasket(event.pathParameters.userName); // DELETE /basket/{userName}
+          break;
+        default:
+          throw new Error(`Unsupported route: "${event.httpMethod}"`);
+      }
+      console.log(body);
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: `Successfully finished operation: "${event.httpMethod}"`,
+          body: body
+        })
+      };
+    } catch (e) {
+      console.error(e);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Failed to perform operation.",
+          errorMsg: e.message,
+          errorStack: e.stack,
+        })
+      };
+    }
+}
+```
+
+7. Now we need to implement the methods that we created in our `switch` statement. Below our switch statement we need to write the implementation for: 
+- [ ] getBsket()
+- [ ] getAllBaskets()
+- [ ] checkoutBasket()
+- [ ] createBasket()
+- [ ] deleteBasket()
+
+So lets begin by simply writing the method signatures for each of the methods we need to create. Update the `src/basket/index.js` file with the following: 
+
+```js
+const getBasket = async (userName) => {
+    console.log(`You have called the getBasket() method`)
+    // Implement function    
+}
+
+const getAllBaskets = async () => {
+    console.log(`You have called the getAllBaskets() method`)
+    // Implement function
+}
+
+const checkoutBasket = async (event) => {
+    console.log(`You have called the checkoutBasket() method`)
+    // Implement function
+}
+
+const createBasket = async (event) => {
+    console.log(`You have called the createBasket() method`)
+    // Implement function
+}
+
+const deleteBasket = async (userName) => {
+    console.log(`You have called the deleteBasket() method`)
+    // Implement function   
+}
+```
+
+8. Let's begin with `getBasket()` method implementation. Here we need to take the Username to execute a query on DDB and execute a return of the basket by that user. We need to wrap our logic in a try/catch block. The result of the query will become the body that we pass to the API gateway response. 
+
+```js
+const getBasket = async (userName) => {
+    console.log(`You have called the getBasket() method`)
+    // Implement function    
+    try {
+        const params = {
+            TableName: process.env.DYNAMODB_TABLE_NAME,
+            Key: marshall({ userName: userName })
+        }
+        const { Item } = await ddbClient.sent(new GetItemCommand(params))
+        console.log(Item)
+        return Item ? unmarshall(Item) : {}
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+Be sure to add the import statements as well. In this case you can simply copy paste our import statements from the `src/product/index.js` as we will be using at least the same modules in the basket serivce. Copy / paste the following code into the top of the `src/basket/index.js` file. 
+
+
+```js
+import { DeleteItemCommand, GetItemCommand, PutItemCommand, QueryCommand, ScanCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { ddbClient } from "./ddbClient";
+```
+
+9. Now write the logic for the `getAllBaskets()` method. Here we will use the AWS SDK `ScanCommand` to return all results in our DDB table. Input the following code: 
+
+```js
+const getAllBaskets = async () => {
+    console.log(`You have called the getAllBaskets() method`)
+    // Implement function
+    try {
+        const params = {
+            TableName: process.env.DYNAMODB_TABLE_NAME,
+        }
+        const { Items } = await ddbClient.send(new ScanCommand(params))
+        console.log(Items)
+        return (Items) ? Items.map((item) => unmarshall(item)) : {}
+
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+```
+
+10. Now write the logic for `createBasket()` method. This will be the same as what we did for creating a Product, where we will assign a basketId using the uuid library (so don't forget this import). Input the following code: 
+
+```js
+const createBasket = async (event) => {
+    console.log(`createBasket function. event : "${event}"`);
+    try {
+      const requestBody = JSON.parse(event.body);
+      // set productid
+      const basketId = uuidv4();
+      requestBody.id = basketId;
+  
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Item: marshall(requestBody || {})
+      };
+  
+      const createResult = await ddbClient.send(new PutItemCommand(params));
+  
+      console.log(createResult);
+      return createResult;
+  
+    } catch(e) {
+      console.error(e);
+      throw e;
+    }
+}
+```
+
+11. Now lets implement the `deleteBasket()` method. Again we can use the `product` implementation as an example. Input the following code: 
+
+```js
+const deleteBasket = async (userName) => {
+    console.log(`You have called the deleteBasket() method: username: ${userName}`)
+    // Implement function
+
+    try {
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Key: marshall({ userName: userName }),
+      };
+  
+      const deleteResult = await ddbClient.send(new DeleteItemCommand(params));
+  
+      console.log(deleteResult);
+      return deleteResult;
+    } catch(e) {
+      console.error(e);
+      throw e;
+    }
+}
+```
+
+12.
