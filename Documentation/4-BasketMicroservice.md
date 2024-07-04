@@ -437,4 +437,10 @@ cdk deploy
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/ff061609-335a-46f7-90ff-9fcc482bccaa">
 </p>
 
-3. 
+3. Setup your testing in Postman for the new `basket` routes. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/61ec6515-1309-4155-be0c-1b3a33e05a77">
+</p>
+
+---------
