@@ -722,4 +722,41 @@ const deleteBasket = async (userName) => {
 }
 ```
 
-12.
+12. For the implementation of `checkoutBasket()` we will be implementing logic with `AWS Eventbridge` so we will delay this for now. 
+
+------
+
+### 7. Now test in Postman 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/2362e27a-e862-4b12-b84b-4508b79c18cb">
+</p>
+
+Now that we've completed all the CRUD operations for the `basket` microservice, we can now deploy and retest our former "dumb" endpoints to validate that they are actually executing the implementation and interaction with DDB. 
+
+1. Run our syntesize command for CloudFormation. 
+
+```
+cdk synth
+cdk diff
+```
+
+2. Deploy the infrastructrue and the 2 microservices 1. product, and 2. basket: 
+
+```
+cdk deploy
+```
+
+3. Update the environment variables for the urls of our services. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/7b45f9fd-eb2b-448c-9d32-f63c7fff3a0f">
+</p>
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/c4c8b0ef-930f-4088-8a92-e29315e0d15b">
+</p>
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/74629584-e0f1-46f2-b19c-4d6a4c39a894">
+</p>
