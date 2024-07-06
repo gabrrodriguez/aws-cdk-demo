@@ -25,16 +25,16 @@ export class SwnDatabase extends Construct {
     return productTable
   }
 
-  private createBasketTable(): ITable{
+  private createBasketTable() : ITable {
     const basketTable = new Table(this, 'basket', {
       partitionKey: {
         name: 'userName',
-        type: AttributeType.STRING
+        type: AttributeType.STRING,
       },
       tableName: 'basket',
       removalPolicy: RemovalPolicy.DESTROY,
       billingMode: BillingMode.PAY_PER_REQUEST
     });
-    return basketTable
+    return basketTable;
   }
 }

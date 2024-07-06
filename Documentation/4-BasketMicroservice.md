@@ -760,3 +760,28 @@ cdk deploy
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/74629584-e0f1-46f2-b19c-4d6a4c39a894">
 </p>
+
+4. Complete the Postman Testing. 
+
+I can't seem to get past this error, that I'm receiving for the GET /basket/:userName and DELETE /basket/:userName endpoints. 
+
+```js
+{
+    "message": "Failed to perform operation.",
+    "errorMsg": "Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.",
+    "errorStack": "Error: Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.\n    at convertToAttr (/var/task/index.js:22889:15)\n    at /var/task/index.js:22986:24\n    at convertToMapAttrFromEnumerableProps (/var/task/index.js:22990:9)\n    at convertToAttr (/var/task/index.js:22900:16)\n    at /var/task/index.js:22986:24\n    at convertToMapAttrFromEnumerableProps (/var/task/index.js:22990:9)\n    at convertToAttr (/var/task/index.js:22900:16)\n    at marshall (/var/task/index.js:23092:30)\n    at getBasket (/var/task/index.js:23180:46)\n    at Runtime.exports.handler (/var/task/index.js:23137:24)"
+}
+```
+
+I've found and tried troubleshooting with the following articles: 
+
+
+> Ref: [Article1](https://github.com/aws/aws-sdk-js-v3/issues/4280)
+
+> Ref: [Article2](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/)
+
+> Ref: [Article3](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html)
+
+> Ref: [Article4](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-util-dynamodb/#removeundefinedvalues)
+
+But I'm still unable to resolve what appears to be a marshalling error. 
