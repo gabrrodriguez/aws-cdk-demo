@@ -761,7 +761,7 @@ cdk deploy
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/74629584-e0f1-46f2-b19c-4d6a4c39a894">
 </p>
 
-4. Complete the Postman Testing. 
+4. Complete the Postman Testing. I was able to resolve error, and complete all associated testing. The issue was a variable reference from the event.pathParameters. I was incorrectly referencing 'userName' when it should have been 'username'. The issue is resolved in the `src/basket/index.js` file. I'm leaving the troubleshooting in the event that anyone runs into a similar issue. 
 
 I can't seem to get past this error, that I'm receiving for the GET /basket/:userName and DELETE /basket/:userName endpoints. 
 
@@ -784,4 +784,10 @@ I've found and tried troubleshooting with the following articles:
 
 > Ref: [Article4](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-util-dynamodb/#removeundefinedvalues)
 
-But I'm still unable to resolve what appears to be a marshalling error. 
+-------
+
+Congrats ... you now have the following construct in working code. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/7d9e0fe2-74c6-4668-9293-ae2cf89b5f93">
+</p>
