@@ -8,9 +8,9 @@
 
 --------
 
-## Procedure
+## Background on EventBridge
 
-### CDK Infrastructure build for EventBridge Resources
+### Invocation Types
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/6fa36ac5-7c56-4e64-a609-042420f3d78c">
@@ -35,7 +35,7 @@
 
 ----------
 
-### Event Bridge
+### EventBridge General Flow
 
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/4730e21c-8e6c-4ae0-a669-c833133c39ee">
@@ -102,7 +102,7 @@ There are 4 primary components to understanding how `EventBridge` works:
 
 -------
 
-### Event Bridge Components
+### Other EventBridge Components
 
 #### Event Bus
 
@@ -129,3 +129,21 @@ There are 4 primary components to understanding how `EventBridge` works:
 > Reference: [Event Bridge Scheduler](https://aws.amazon.com/eventbridge/scheduler/)
 
 ---------
+
+### What EventBridge Enables in our Design
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/83251686-0bc7-4040-977c-9759deb018fa">
+</p>
+
+- [ ] Up till this point we simply used Synchronous REST calls to invoke our Lambda functions. 
+- [ ] Now we will be introducing a "pub/sub" or "listener" pattern with EventBridge, where a RESTful call will not be the trigger mechanism but rather `eventing` and `event listners` will execute automated responses vs. RESTful calls. 
+
+-------
+
+## Procedure
+
+### 1. Build the Infrastructure for EventBridge
+
+1. 
+
