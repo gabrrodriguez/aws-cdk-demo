@@ -110,6 +110,10 @@ There are 4 primary components to understanding how `EventBridge` works:
 
 ## Procedure
 
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/396346d0-9902-4acb-8dd3-235b9211a8f7">
+</p>
+
 ### 1. Build the Infrastructure for EventBridge
 
 1. 
