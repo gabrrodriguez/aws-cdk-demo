@@ -22,8 +22,15 @@ While many of the steps in this process are "repeatable" there are nuances and a
 
 - [ ] 1. Initial Product Microservice Build
 - [ ] 2. Product Microservice CRUD API Build
+- [ ] 3. CDK Refactoring / Organizational Structure
+- [ ] 4. Initial Basket Microservice Build
+- [ ] 5. Adding EventBridge and Async communication
 
 ------
 
 ## Reference 
 
+- [ ] [Amazon DynamoDB Docs](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dynamodb-readme.html)
+- [ ] [AWS CDK Documentation](https://github.com/gabrrodriguez/aws-cdk-dynamodb-table/tree/cdk-v2)
+- [ ] [AWS CDK Getting Started](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
+- [ ] [AWS CDK Github Repo](https://github.com/aws/aws-cdk/tree/main/packages/aws-cdk-lib)
