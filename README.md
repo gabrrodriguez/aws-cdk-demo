@@ -3,7 +3,7 @@
 ## Architecture
 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/fa8cd646-a241-4201-92a5-9f0261dd8d7c">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/f441e8bf-ca1b-42aa-9ca0-6150f10486d0">
 </p>
 
 This is the architecture we will develop within this demo. This will be completed in a step by step format. 
