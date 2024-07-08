@@ -33,6 +33,8 @@
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/a3114256-291e-40a9-9e55-eb5120cb17bf">
 </p>
 
+> Reference: [EventBridge Message Structure](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ev-events.html)
+
 ----------
 
 ### EventBridge General Flow
@@ -116,5 +118,142 @@ There are 4 primary components to understanding how `EventBridge` works:
 
 ### 1. Build the Infrastructure for EventBridge
 
-1. 
+1. First we need to build the CDK code the will provision the infrastructure for our Eventbridge instance. 
 
+Nav to our `lib/aws-microservice-stack.ts` file and add the following code: 
+
+```js
+    // eventbus
+    const bus = new EventBus(this, 'SwnEventBus', {
+      eventBusName: 'SwnEventBus'
+    })
+```
+
+Be sure to include the import 
+
+```js
+import { EventBus } from 'aws-cdk-lib/aws-events';
+```
+
+2. Now, within the same file we need to create an `EventBus Rule`. Input the following code: 
+
+```js
+    const checkoutBasketRule = new Rule(this, 'CheckoutBasketRule', {
+      eventBus: bus,
+      enabled: true,
+      description: "When the Basket microservice checks out an order",
+      eventPattern: {
+        source: ['com.swn.basket.checkoutbasket'],
+        detailType: ['CheckoutBasket']
+      },
+      ruleName: 'CheckoutBaseketRule'
+    })
+```
+
+> NOTE: The most important component in the JSON structure above is the `eventPattern`. In our `event` the only way that EventBridge will know to trigger our Ordering Service call is it will be listening for a `source` and `detailType` that match exactly what we have above. If these do not match our `rule` and `event` then EventBridge will not know to do anything with our event.
+
+You will also need to import `Rule`: 
+
+```js
+import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
+```
+
+3. Now, within the same file you need to add the `target`. 
+
+```js
+    checkoutBasketRule.addTarget(new LambdaFunction(orderingMicroservice))
+```
+
+Our `orderingMicroservice` does not exist yet, so we will have to go create this. 
+
+----- 
+
+### 2. Refactor our eventbridge per AWS CDK Construct 
+
+Recall for all our infra builds we create a file to segment our resources and then we manage these files via our `stack` (`aws-microservice-stack.ts`) file. We will repeat this process for our `eventbridge` resource. Therefore we will have to refactor our EventBus code a little. 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/d5265be1-1730-49a7-bb0b-cd6d8eddf603">
+</p>
+
+
+1. Create a new file called, `lib/eventbus.ts` and create a new EventBus construct. Call the constructor and input the following code: 
+
+```js
+import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { Construct } from "constructs";
+
+interface SwnEventBusProps {
+    publishFunction: IFunction,
+    targetFunction: IFunction
+}
+export class SwnEventBus extends Construct{
+    constructor(scope: Construct, id: string, props: SwnEventBusProps) {
+        super(scope, id)
+    }
+}
+```
+
+2. Now copy/paste our code in our `lib/aws-microservice-stack.ts` file to our `lib/eventbus.ts` file like this: 
+
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/0c8747c3-bb36-4447-a790-1594ec4bb1e2">
+</p>
+
+Be sure to incorporate the import statements 
+
+```js
+import { EventBus, Rule } from "aws-cdk-lib/aws-events";
+import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { Construct } from "constructs";
+```
+
+3. For our last change implement our interface `targetFunction` in place of our `orderingMicroservice` in our `/lib/eventbus.ts` file. 
+
+```js
+      checkoutBasketRule.addTarget(new LambdaFunction(props.targetFunction))
+```
+
+4. We need to grant IAM permissions to the EventBus to interface with our Lambda function. To do this you need to add the following line of code to the `eventbus.ts` file. 
+
+```js
+bus.grantPutEventsTo(props.publishFunction)
+```
+
+5. Now lets incorporate our `eventbus.ts` file back into our main tech stack file `lib/aws-microservices-stack.ts`. To do so update the `/aws-microservices-stack.ts` file as follows:
+
+```js
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { SwnDatabase } from './database';
+import { SwnMicroservices } from './microservices';
+import { SwnApiGateway } from './apigateway';
+import { SwnEventBus } from './eventbus';
+
+export class AwsMicroservicesStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    const database = new SwnDatabase(this, 'Database')
+
+    const microservice = new SwnMicroservices(this, 'Microservices', {
+      productTable: database.productTable,
+      basketTable: database.basketTable
+    })
+
+    const apigateway = new SwnApiGateway(this, 'ApiGateway', {
+      productMicroservice: microservice.productMicroservice,
+      basketMicroservice: microservice.basketMicroservice
+    })
+
+    const eventBus = new SwnEventBus(this, 'EventBus', {
+      publishFunction: microservice.basketMicroservice,
+      targetFunction: // microservice.orderMicroservice
+    })
+  }
+}
+```
+
+> Note: We cannot reference our `targetFunction` yet, because this will be the `orderMicroservice` which we haven't created yet. For now we can leave a comment and fill in the reference when we create the order service. 
+
+---------
