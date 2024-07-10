@@ -4,7 +4,7 @@
 
 ### eCommerce Example 
 <p align="center">
-<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/ebf680d0-a24c-43de-b4eb-823c7cd09cbd">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/3ba8bf31-6c75-4b6f-bc53-c661d48d29c5">
 </p>
 
 ### Banking Example
