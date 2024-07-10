@@ -3,103 +3,108 @@ import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
 interface SwnApiGatewayProps {
-    productMicroservice: IFunction
-    basketMicroservice: IFunction
-    orderingMicroservice: IFunction
+    productMicroservice: IFunction,
+    basketMicroservice: IFunction,
+    orderingMicroservices: IFunction
 }
 
-export class SwnApiGateway extends Construct {
+export class SwnApiGateway extends Construct {    
 
-    constructor(scope: Construct, id: string, props: SwnApiGatewayProps ) {
-        super(scope, id)
+    constructor(scope: Construct, id: string, props: SwnApiGatewayProps) {
+        super(scope, id);
 
-        this.createProductApi(props.productMicroservice)
-        this.createBasketApi(props.basketMicroservice)
-        this.createOrderApi(props.orderingMicroservice)
+        // Product api gateway
+        this.createProductApi(props.productMicroservice);
+        // Basket api gateway
+        this.createBasketApi(props.basketMicroservice);
+        // Ordering api gateway
+        this.createOrderApi(props.orderingMicroservices);
     }
-    
+
     private createProductApi(productMicroservice: IFunction) {
-        // Product microservices api gateway
-        const apigw = new LambdaRestApi(this, 'productApi', {
-            restApiName: 'ProductSerivce',
-            handler: productMicroservice,
-            proxy: false
-        });
+      // Product microservices api gateway
+      // root name = product
 
-        // root name = product
-        const product = apigw.root.addResource('product')
+      // GET /product
+      // POST /product
 
-        // GET /product
-        product.addMethod('GET')
+      // Single product with id parameter
+      // GET /product/{id}
+      // PUT /product/{id}
+      // DELETE /product/{id}
 
-        // POST /product
-        product.addMethod('POST')
-
-        // Single product with id parameter
-        const singleProduct = product.addResource('{id}')
-
-        // GET /product/{id}
-        singleProduct.addMethod('GET')
-
-        // PUT /product/{id}
-        singleProduct.addMethod('PUT')
-
-        // DELETE /product/{id}
-        singleProduct.addMethod('DELETE')
+      const apigw = new LambdaRestApi(this, 'productApi', {
+        restApiName: 'Product Service',
+        handler: productMicroservice,
+        proxy: false
+      });
+  
+      const product = apigw.root.addResource('product');
+      product.addMethod('GET'); // GET /product
+      product.addMethod('POST');  // POST /product
+      
+      const singleProduct = product.addResource('{id}'); // product/{id}
+      singleProduct.addMethod('GET'); // GET /product/{id}
+      singleProduct.addMethod('PUT'); // PUT /product/{id}
+      singleProduct.addMethod('DELETE'); // DELETE /product/{id}
     }
 
     private createBasketApi(basketMicroservice: IFunction) {
         // Basket microservices api gateway
+        // root name = basket
+
+        // GET /basket
+        // POST /basket
+
+        // // Single basket with userName parameter - resource name = basket/{userName}
+        // GET /basket/{userName}
+        // DELETE /basket/{userName}
+
+        // checkout basket async flow
+        // POST /basket/checkout
+
         const apigw = new LambdaRestApi(this, 'basketApi', {
-            restApiName: 'BasketSerivce',
+            restApiName: 'Basket Service',
             handler: basketMicroservice,
             proxy: false
         });
 
-        // root name = basket
-        const basket = apigw.root.addResource('basket')
+        const basket = apigw.root.addResource('basket');
+        basket.addMethod('GET');  // GET /basket
+        basket.addMethod('POST');  // POST /basket
 
-        // GET /basket
-        basket.addMethod('GET')
+        const singleBasket = basket.addResource('{userName}');
+        singleBasket.addMethod('GET');  // GET /basket/{userName}
+        singleBasket.addMethod('DELETE'); // DELETE /basket/{userName}
 
-        // POST /basket
-        basket.addMethod('POST')
-
-        // resource/name = /basket/{userName}
-        const singleBasket = basket.addResource('{username}')
-
-        // GET /basket/{userName}
-        singleBasket.addMethod('GET')
-
-        // DELETE /basket/{userName}
-        singleBasket.addMethod('DELETE')
-
-        // resource/name = /basket/checkout
-        const basketCheckout = basket.addResource('checkout')
-
-        // POST /basket/checkout
-        basketCheckout.addMethod('POST')   // expected payload: {userName: swn}
+        const basketCheckout = basket.addResource('checkout');
+        basketCheckout.addMethod('POST'); // POST /basket/checkout
+            // expected request payload : { userName : swn }
     }
 
-    private createOrderApi(orderingMicroservice : IFunction) {
-                // Ordering microservices API Gateway
-            // Basket microservices api gateway
-            const apigw = new LambdaRestApi(this, 'orderApi', {
-                restApiName: 'Order Service',
-                handler: orderingMicroservice,
-                proxy: false
-            });
+    private createOrderApi(orderingMicroservices: IFunction) {
+        // Ordering microservices api gateway
+        // root name = order
+
+        // GET /order
+	    // GET /order/{userName}
+        // expected request : xxx/order/swn?orderDate=timestamp
+        // ordering ms grap input and query parameters and filter to dynamo db
+
+        const apigw = new LambdaRestApi(this, 'orderApi', {
+            restApiName: 'Order Service',
+            handler: orderingMicroservices,
+            proxy: false
+        });
     
-            // root name = order
-            const order = apigw.root.addResource('order')
+        const order = apigw.root.addResource('order');
+        order.addMethod('GET');  // GET /order        
     
-            // GET /order
-            order.addMethod('GET')
+        const singleOrder = order.addResource('{userName}');
+        singleOrder.addMethod('GET');  // GET /order/{userName}
+            // expected request : xxx/order/swn?orderDate=timestamp
+            // ordering ms grap input and query parameters and filter to dynamo db
     
-            // GET /order/{userName}
-            const singleOrder = order.addResource('{username}')
-                // expected request: xxx/order/swn?orderDate=timestamp
-                // ordering ms grab input and query parameters and filter ddb
-            return singleOrder
+        return singleOrder;
     }
 }

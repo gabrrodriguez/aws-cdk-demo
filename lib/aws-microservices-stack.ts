@@ -1,31 +1,32 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { SwnDatabase } from './database';
-import { SwnMicroservices } from './microservices';
 import { SwnApiGateway } from './apigateway';
+import { SwnDatabase } from './database';
 import { SwnEventBus } from './eventbus';
+import { SwnMicroservices } from './microservice';
 
 export class AwsMicroservicesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const database = new SwnDatabase(this, 'Database')
+    const database = new SwnDatabase(this, 'Database');    
 
-    const microservice = new SwnMicroservices(this, 'Microservices', {
+    const microservices = new SwnMicroservices(this, 'Microservices', {
       productTable: database.productTable,
       basketTable: database.basketTable,
       orderTable: database.orderTable
-    })
+    });
 
     const apigateway = new SwnApiGateway(this, 'ApiGateway', {
-      productMicroservice: microservice.productMicroservice,
-      basketMicroservice: microservice.basketMicroservice,
-      orderingMicroservice: microservice.orderingMicroservice
-    })
+      productMicroservice: microservices.productMicroservice,
+      basketMicroservice: microservices.basketMicroservice,
+      orderingMicroservices: microservices.orderingMicroservice
+    });
+    
+    const eventbus = new SwnEventBus(this, 'EventBus', {
+      publisherFuntion: microservices.basketMicroservice,
+      targetFuntion: microservices.orderingMicroservice
+    });
 
-    const eventBus = new SwnEventBus(this, 'EventBus', {
-      publishFunction: microservice.basketMicroservice,
-      targetFunction: microservice.orderingMicroservice
-    })
   }
 }
