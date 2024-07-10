@@ -2,6 +2,12 @@
 
 ## Architecture
 
+### eCommerce Example 
+<p align="center">
+<img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/ebf680d0-a24c-43de-b4eb-823c7cd09cbd">
+</p>
+
+### Banking Example
 <p align="center">
 <img width="450" alt="image" src="https://github.com/gabrrodriguez/aws-cdk-demo/assets/126508932/f0079a61-8cb1-41a8-875e-0cfd2724f41c">
 </p>
